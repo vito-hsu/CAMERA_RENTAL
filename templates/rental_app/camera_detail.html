@@ -1,0 +1,159 @@
+<!-- rental_app/templates/rental_app/camera_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ camera.name }} - 相機詳情{% endblock %}
+
+{% block content %}
+    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">{{ camera.name }}</h2>
+
+    <div class="camera-detail-layout">
+        <div class="camera-media">
+            {% if camera.image_url %}
+                <img src="{{ camera.image_url }}" alt="{{ camera.name }}" class="camera-detail-image" onerror="this.onerror=null;this.src='https://placehold.co/600x450/e0e0e0/333333?text=無圖片';">
+            {% else %}
+                <img src="https://placehold.co/600x450/e0e0e0/333333?text=無圖片" alt="Placeholder Image" class="camera-detail-image">
+            {% endif %}
+        </div>
+        <div class="camera-details-info">
+            <p class="detail-description">{{ camera.description|default:"這是一台優質相機，適合多種攝影需求。了解更多相機特性與租賃資訊。" }}</p>
+            <p class="detail-price"><strong>每日租金:</strong> <span class="amount">NT${{ camera.price_per_day }}</span></p>
+            <p class="detail-availability"><strong>狀態:</strong>
+                {% if camera.is_available %}
+                    <span class="available">✅ 可用</span>
+                {% else %}
+                    <span class="unavailable">❌ 不可用</span>
+                {% endif %}
+            </p>
+
+            <h3 style="color: #333333; margin-top: 40px; margin-bottom: 20px; font-size: 1.8em; font-weight: 600;">預訂租賃</h3>
+            <form method="post" action="{% url 'rent_camera' camera.pk %}" class="rental-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.user_name.label_tag }}
+                    {{ form.user_name }}
+                    {% if form.user_name.errors %}
+                        <div class="form-errors">{% for error in form.user_name.errors %}{{ error }}{% endfor %}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label_tag }} {# 新增 Email 欄位的渲染 #}
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="form-errors">{% for error in form.email.errors %}{{ error }}{% endfor %}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.start_date.label_tag }}
+                    {{ form.start_date }}
+                    {% if form.start_date.errors %}
+                        <div class="form-errors">{% for error in form.start_date.errors %}{{ error }}{% endfor %}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.end_date.label_tag }}
+                    {{ form.end_date }}
+                    {% if form.end_date.errors %}
+                        <div class="form-errors">{% for error in form.end_date.errors %}{{ error }}{% endfor %}</div>
+                    {% endif %}
+                </div>
+                {% if form.non_field_errors %}
+                    <div class="form-errors" style="margin-bottom: 20px;">
+                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary" {% if not camera.is_available %}disabled{% endif %}>
+                    {% if camera.is_available %}立即租賃{% else %}目前不可租賃{% endif %}
+                </button>
+            </form>
+            <div style="margin-top: 30px; text-align: center;">
+                <a href="{% url 'camera_list' %}" class="btn btn-link">返回相機列表</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .camera-detail-layout {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 40px; /* 增加間距 */
+            margin-top: 20px;
+            align-items: flex-start; /* 頂部對齊 */
+        }
+        .camera-media {
+            flex: 2; /* Takes 2 parts of available space */
+            min-width: 350px; /* Minimum width for the image section */
+            text-align: center;
+        }
+        .camera-detail-image {
+            width: 100%;
+            max-width: 600px; /* Limit max image width */
+            height: auto;
+            border-radius: 8px; /* 較小的圓角 */
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1); /* 柔和的陰影 */
+            border: 1px solid #eeeeee; /* 輕微的邊框 */
+        }
+        .camera-details-info {
+            flex: 1; /* Takes 1 part of available space */
+            min-width: 300px; /* Minimum width for the info/form section */
+        }
+        .detail-description {
+            font-size: 1.05em;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 25px; /* 增加間距 */
+        }
+        .detail-price, .detail-availability {
+            font-size: 1.15em; /* 字體稍大 */
+            margin-bottom: 15px; /* 增加間距 */
+            color: #333;
+        }
+        .detail-price strong, .detail-availability strong {
+            color: #222; /* 更深的強調色 */
+            font-weight: 600;
+        }
+        .detail-price .amount {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #5a7d9b; /* 藍灰色強調色 */
+            margin-left: 5px;
+        }
+        .availability .available {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .availability .unavailable {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .rental-form {
+            background-color: #fcfcfc; /* 更淺的背景 */
+            padding: 30px; /* 增加內邊距 */
+            border-radius: 10px; /* 更大的圓角 */
+            border: 1px solid #e0e0e0; /* 淺邊框 */
+            margin-top: 30px; /* 增加間距 */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* 輕微陰影 */
+        }
+        .btn-primary[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-image: none;
+            background-color: #cccccc;
+            box-shadow: none;
+            transform: none;
+        }
+
+
+        /* 響應式調整 */
+        @media (max-width: 768px) {
+            .camera-detail-layout {
+                flex-direction: column; /* Stack elements vertically */
+                align-items: center; /* Center items when stacked */
+                gap: 30px;
+            }
+            .camera-media, .camera-details-info {
+                width: 100%; /* Take full width */
+                min-width: unset;
+            }
+        }
+    </style>
+{% endblock %}

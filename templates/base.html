@@ -1,0 +1,217 @@
+<!-- camera_rental/templates/base.html -->
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}相機租約網站{% endblock %}</title>
+    <style>
+        /* 全局字體和背景 */
+        body {
+            font-family: 'Inter', Arial, sans-serif; /* 使用 Inter 字體，確保視覺一致性 */
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8; /* 更淺的背景色，接近純白，提供開放感 */
+            color: #333; /* 主要文字顏色 */
+            line-height: 1.6; /* 增加行高，提升可讀性 */
+        }
+
+        /* 頁面頂部導航欄 */
+        .header {
+            background-color: #222222; /* 更深的灰黑色，提供穩重感 */
+            color: white; /* 白色文字與深色背景形成良好對比 */
+            padding: 20px 30px; /* 增加上下內邊距，提升空間感 */
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 更微妙的陰影，增加質感 */
+            /* 移除底部的圓角，保持更簡潔的線條 */
+            border-bottom: 1px solid rgba(255,255,255,0.1); /* 輕微的分隔線 */
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em; /* 標題字體更大，更顯眼 */
+            letter-spacing: 1.5px; /* 增加字距，提升美感 */
+            font-weight: 600; /* 更粗的字體 */
+        }
+        .header nav {
+            margin-top: 20px; /* 導航連結與標題間距 */
+        }
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 25px; /* 增加連結間距 */
+            font-weight: 500; /* 字體粗細適中 */
+            font-size: 1.1em; /* 導航連結字體稍大 */
+            transition: color 0.3s ease, border-bottom 0.3s ease; /* 平滑過渡效果 */
+            padding-bottom: 5px; /* 為底部指示線留空間 */
+            border-bottom: 2px solid transparent; /* 預設透明邊框 */
+        }
+        .header nav a:hover {
+            color: #ffffff; /* 懸停時保持白色，但強調下劃線 */
+            border-bottom: 2px solid #a8c1f0; /* 懸停時出現柔和的藍色下劃線 */
+        }
+
+        /* 主要內容容器 */
+        .container {
+            max-width: 960px; /* 保持適中寬度，便於閱讀 */
+            margin: 40px auto; /* 增加上下外邊距，提供更多留白 */
+            padding: 40px; /* 增加內邊距 */
+            background-color: white;
+            border-radius: 8px; /* 較小的圓角，更為內斂 */
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08); /* 更明顯但柔和的陰影效果 */
+            box-sizing: border-box; /* 確保 padding 不會增加寬度 */
+        }
+
+        /* 頁面底部版權信息 */
+        .footer {
+            text-align: center;
+            padding: 30px; /* 增加內邊距 */
+            margin-top: 50px; /* 增加上外邊距 */
+            background-color: #222222; /* 與頭部顏色一致 */
+            color: #cccccc; /* 淺灰色文字 */
+            font-size: 0.9em;
+            /* 移除底部的圓角和陰影，與頭部設計呼應 */
+        }
+
+        /* 通用按鈕樣式 - 簡潔扁平化 */
+        .btn {
+            display: inline-block;
+            padding: 12px 28px; /* 增加按鈕大小 */
+            font-size: 1em; /* 字體適中 */
+            font-weight: 600; /* 更粗的字體 */
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px; /* 更方正的圓角 */
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: none; /* 移除預設陰影 */
+            border: 1px solid transparent; /* 預設透明邊框 */
+            line-height: 1; /* 確保文字居中 */
+        }
+        .btn-primary {
+            background-color: #5a7d9b; /* 柔和的藍灰色，類似網站中較亮的按鈕 */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4b6a8a; /* 懸停時顏色稍深 */
+            transform: translateY(-1px); /* 輕微上浮 */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 輕微陰影 */
+        }
+        .btn-secondary {
+            background-color: transparent; /* 透明背景 */
+            color: #5a7d9b; /* 藍灰色文字 */
+            border: 1px solid #5a7d9b; /* 藍灰色邊框 */
+        }
+        .btn-secondary:hover {
+            background-color: #5a7d9b; /* 懸停時填充顏色 */
+            color: white; /* 文字變白 */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-link {
+            background: none;
+            color: #007bff; /* 保持標準藍色，或根據網站風格調整 */
+            border: none;
+            padding: 0;
+            text-decoration: underline;
+            font-weight: normal;
+        }
+        .btn-link:hover {
+            color: #0056b3;
+            text-decoration: none; /* 懸停時取消下劃線 */
+        }
+
+        /* 表單樣式 (為整體美觀而優化) */
+        .form-group {
+            margin-bottom: 25px; /* 增加表單組間距 */
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 10px; /* 增加標籤與輸入框間距 */
+            font-weight: 500; /* 字體粗細適中 */
+            color: #555;
+            font-size: 1.05em; /* 標籤字體稍大 */
+        }
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group textarea {
+            width: 100%; /* 輸入框佔滿可用寬度 */
+            padding: 14px; /* 增加輸入框內邊距，使其更舒適 */
+            border: 1px solid #dddddd; /* 淺灰色邊框 */
+            border-radius: 6px; /* 圓角輸入框 */
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="date"]:focus,
+        .form-group textarea:focus {
+            border-color: #5a7d9b; /* 聚焦時藍灰色邊框 */
+            box-shadow: 0 0 0 3px rgba(90,125,155,0.2); /* 聚焦時柔和陰影 */
+            outline: none; /* 移除瀏覽器預設外框 */
+        }
+        .form-errors {
+            color: #dc3545; /* 錯誤訊息顏色 */
+            font-size: 0.9em;
+            margin-top: 8px; /* 錯誤訊息與輸入框間距 */
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+            .header nav a {
+                margin: 0 15px;
+                font-size: 1em;
+            }
+        }
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px 20px;
+            }
+            .header h1 {
+                font-size: 1.6em;
+            }
+            .header nav {
+                display: flex;
+                flex-direction: column;
+                gap: 12px; /* 增加連結間距 */
+                margin-top: 15px;
+            }
+            .header nav a {
+                padding-bottom: 0; /* 在小螢幕上移除底部指示線空間 */
+            }
+            .header nav a::after {
+                display: none; /* 在小螢幕上隱藏底部指示線 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>相機租約中心</h1>
+        <nav>
+            <a href="{% url 'camera_list' %}">所有相機</a>
+            <a href="{% url 'my_rentals' %}">我的租賃</a>
+            <a href="{% url 'about_us' %}">關於我們</a>
+            <!-- 未來可添加登入/註冊連結 -->
+        </nav>
+    </div>
+
+    <div class="container">
+        {% block content %}
+        <!-- 頁面內容將在此處顯示 -->
+        {% endblock %}
+    </div>
+
+    <div class="footer">
+        &copy; 2025 CameraIsAllYouNeed. 版權所有.
+    </div>
+
+</body>
+</html>

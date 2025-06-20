@@ -1,0 +1,158 @@
+<!-- rental_app/templates/rental_app/my_rentals.html -->
+{% extends 'base.html' %}
+
+{% block title %}我的租賃{% endblock %}
+
+{% block content %}
+    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">我的租賃訂單</h2>
+
+    {% if rentals %}
+        <div class="rental-list">
+            {% for rental in rentals %}
+                <div class="rental-item">
+                    <div class="rental-details">
+                        <h3 class="rental-camera-name">{{ rental.camera.name }}</h3>
+                        <p><strong>租賃者:</strong> {{ rental.user_name }}</p>
+                        <p><strong>日期:</strong> {{ rental.start_date }} 至 {{ rental.end_date }}</p>
+                        <p><strong>總租金:</strong> NT$<span class="amount">{{ rental.total_price }}</span></p>
+                        <p class="rented-at"><strong>預訂時間:</strong> {{ rental.rented_at|date:"Y-m-d H:i" }}</p>
+                    </div>
+                    <div class="rental-status">
+                        <span class="status-badge status-{{ rental.status }}">{{ rental.get_status_display }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="text-align: center; color: #777; margin-top: 50px; font-size: 1.1em;">您目前沒有任何租賃訂單。</p>
+    {% endif %}
+
+    <div style="text-align: center; margin-top: 50px;">
+        <a href="{% url 'camera_list' %}" class="btn btn-secondary">瀏覽更多相機</a>
+    </div>
+
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elem = document.querySelector('.rental-list');
+            if (elem) {
+                var msnry = new Masonry(elem, {
+                    // Masonry 選項
+                    itemSelector: '.rental-item', // 瀑布流項目選擇器
+                    columnWidth: '.rental-item', // 欄寬與項目寬度相同
+                    gutter: 20, // 項目之間的間距 (水平和垂直)
+                    percentPosition: true, // 使用百分比定位，有利於響應式佈局
+                    resize: true // 窗口大小改變時重新佈局
+                });
+
+                // 如果有圖片，確保圖片加載後重新佈局 (可選，但對於瀑布流很重要)
+                // var imgLoad = imagesLoaded( elem );
+                // imgLoad.on( 'always', function() {
+                //   msnry.layout();
+                // });
+            }
+        });
+    </script>
+
+    <style>
+        .rental-list {
+            /* 移除原有的 flexbox 佈局，由 Masonry 接管 */
+            /* display: flex; */
+            /* flex-direction: column; */
+            /* gap: 20px; */
+
+            margin: 0 auto; /* 讓整個網格在父容器中居中 */
+            position: relative; /* Masonry 運作所需的定位 */
+            /* Masonry 會根據 columnWidth 和 gutter 自動計算總寬度 */
+        }
+        .rental-item {
+            /* Masonry 會根據這個寬度來計算欄位，並將此寬度應用到每個項目上 */
+            width: calc(33.333% - 20px); /* 大約三欄，減去 gutter */
+            margin-bottom: 20px; /* 垂直間距，Masonry 會處理水平間距 */
+
+            background-color: #ffffff; /* 純白色背景，更乾淨 */
+            border: none; /* 移除邊框 */
+            border-radius: 12px; /* 更大的圓角，類似 Pinterest 卡片 */
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 柔和但更明顯的陰影，製造浮動感 */
+            /* 移除 flex 相關佈局，讓 Masonry 決定其位置 */
+            /* display: flex; */
+            /* justify-content: space-between; */
+            /* align-items: flex-start; */
+            /* flex-wrap: wrap; */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .rental-item:hover {
+            transform: translateY(-5px); /* 懸停時輕微上浮 */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* 懸停時陰影更突出 */
+        }
+        .rental-details {
+            /* flex-grow: 1; /* 移除，除非您在卡片內部仍使用 flex */
+            width: 100%; /* 確保內容佔滿卡片寬度 */
+            /* min-width: 200px; */
+            /* margin-right: 20px; /* 移除，因為不再是橫向佈局 */
+        }
+        .rental-details h3 {
+            margin-top: 0;
+            color: #333333;
+            font-size: 1.5em; /* 標題字體更大 */
+            margin-bottom: 12px; /* 增加間距 */
+            font-weight: 700; /* 更粗的字體，強調 */
+        }
+        .rental-details p {
+            margin: 6px 0; /* 調整行間距 */
+            color: #555;
+            font-size: 1em; /* 字體更清晰 */
+        }
+        .rental-details .amount {
+            font-weight: bold;
+            color: #4A90E2; /* 選擇一個 Pinterest 風格的藍色作為強調色 */
+            font-size: 1.2em; /* 價格數字更突出 */
+            margin-left: 3px;
+        }
+        .rental-details .rented-at {
+            font-size: 0.9em; /* 時間字體 */
+            color: #888;
+            margin-top: 10px; /* 增加與上方內容的間距 */
+        }
+        .rental-status {
+            width: 100%; /* 讓狀態徽章佔據一行 */
+            text-align: right; /* 狀態徽章靠右 */
+            margin-top: 15px; /* 與上方內容間距 */
+        }
+        .status-badge {
+            padding: 8px 16px; /* 調整內邊距 */
+            border-radius: 20px; /* 更圓的圓角 */
+            font-weight: 600; /* 粗體 */
+            font-size: 0.85em; /* 字體大小 */
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* 輕微陰影 */
+        }
+        /* 狀態顏色 - 調整為 Pinterest 風格的柔和且清晰的色調 */
+        .status-pending { background-color: #FFC107; /* 鮮明黃色 */ }
+        .status-active { background-color: #4CAF50; /* 清新綠色 */ }
+        .status-returned { background-color: #9E9E9E; /* 柔和灰色 */ }
+        .status-cancelled { background-color: #F44336; /* 明亮紅色 */ }
+
+        /* 響應式調整 */
+        @media (max-width: 992px) { /* 平板電腦，兩欄佈局 */
+            .rental-item {
+                width: calc(50% - 20px);
+            }
+        }
+        @media (max-width: 600px) { /* 手機，單欄佈局 */
+            .rental-list {
+                margin: 0 15px; /* 整個列表左右留白 */
+            }
+            .rental-item {
+                width: calc(100% - 0px); /* 100% 寬度，內部的 padding 會保持 */
+                margin: 0 auto 20px auto; /* 居中並保持底部間距 */
+            }
+            .rental-status {
+                margin-top: 15px;
+                text-align: left; /* 狀態徽章在手機上靠左 */
+            }
+        }
+    </style>
+{% endblock %}

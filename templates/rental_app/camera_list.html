@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}所有相機{% endblock %}
+
+{% block content %}
+    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">可租賃相機</h2>
+    <div class="camera-list-grid">
+        {% for camera in cameras %}
+            <div class="camera-card">
+                {% if camera.image_url %}
+                    <img src="{{ camera.image_url }}" alt="{{ camera.name }}" class="camera-image" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e0e0e0/333333?text=無圖片';">
+                {% else %}
+                    <img src="https://placehold.co/400x300/e0e0e0/333333?text=無圖片" alt="Placeholder Image" class="camera-image">
+                {% endif %}
+                <div class="camera-info">
+                    <h3>{{ camera.name }}</h3>
+                    <p class="description">{{ camera.description|default:"無描述" }}</p>
+                    <p class="price">每日租金: NT$<span class="amount">{{ camera.price_per_day }}</span></p>
+                    <p class="availability">狀態:
+                        {% if camera.is_available %}
+                            <span class="available">✅ 可用</span>
+                        {% else %}
+                            <span class="unavailable">❌ 不可用</span>
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'camera_detail' camera.pk %}" class="btn btn-secondary view-detail-btn">查看詳情</a>
+                </div>
+            </div>
+        {% empty %}
+            <p style="text-align: center; grid-column: 1 / -1; color: #777; margin-top: 50px; font-size: 1.1em;">目前沒有可租賃的相機。</p>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin-top: 50px;">
+        <a href="{% url 'my_rentals' %}" class="btn btn-secondary">查看我的租賃</a>
+    </div>
+
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elem = document.querySelector('.camera-list-grid');
+            if (elem) {
+                // 初始化 Masonry
+                var msnry = new Masonry(elem, {
+                    itemSelector: '.camera-card',
+                    columnWidth: '.camera-card',
+                    gutter: 20,
+                    percentPosition: true,
+                    resize: true
+                });
+
+                // 使用 imagesLoaded 監聽所有圖片載入完成
+                // 當圖片都載入完畢後，重新佈局 Masonry
+                imagesLoaded(elem).on('always', function() {
+                    msnry.layout(); // 重新計算佈局
+                });
+            }
+        });
+    </script>
+
+    <style>
+        .camera-list-grid {
+            margin: 0 auto;
+            position: relative;
+        }
+        .camera-card {
+            width: calc(33.333% - 20px); /* 大約三欄，減去 gutter */
+            margin-bottom: 20px; /* 垂直間距，Masonry 會處理水平間距 */
+
+            background-color: #ffffff; /* 純白色背景，更乾淨 */
+            border-radius: 12px; /* 更大的圓角，類似 Pinterest 卡片 */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 柔和但更明顯的陰影，製造浮動感 */
+            overflow: hidden;
+            display: flex; /* 內部元素仍然可以使用 flexbox */
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #eeeeee; /* 輕微的邊框 */
+        }
+        .camera-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12); /* 懸停時陰影更明顯 */
+        }
+        .camera-image {
+            width: 100%;
+            height: auto; /* 保持圖片比例 */
+            max-height: 250px; /* 例如限制最大高度，防止過高影響佈局 */
+            object-fit: cover; /* 確保圖片填充區域 */
+            border-bottom: 1px solid #eeeeee;
+        }
+        .camera-info {
+            padding: 20px; /* 增加內邊距 */
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; /* Make info section grow to fill space */
+        }
+        .camera-info h3 {
+            margin-top: 0;
+            color: #333333; /* 更深的標題顏色 */
+            font-size: 1.5em; /* 標題字體稍大 */
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .camera-info .description {
+            font-size: 0.95em; /* 描述字體稍大 */
+            color: #666;
+            margin-bottom: 15px; /* 增加間距 */
+            flex-grow: 1; /* Allow description to take space */
+        }
+        .camera-info .price {
+            font-weight: bold;
+            color: #4A90E2; /* 藍色強調色 */
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        .camera-info .price .amount {
+            font-size: 1.2em; /* 價格數字更大 */
+            font-weight: 700;
+        }
+        .camera-info .availability {
+            font-size: 0.9em;
+            margin-bottom: 20px; /* 增加間距 */
+            color: #777;
+        }
+        .availability .available {
+            color: #4CAF50; /* 清新綠色 */
+            font-weight: bold;
+        }
+        .availability .unavailable {
+            color: #F44336; /* 明亮紅色 */
+            font-weight: bold;
+        }
+        .view-detail-btn {
+            width: 100%;
+            margin-top: auto; /* Push button to the bottom */
+            box-sizing: border-box; /* Include padding and border in width */
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 992px) { /* 平板電腦，兩欄佈局 */
+            .camera-card {
+                width: calc(50% - 20px);
+            }
+        }
+        @media (max-width: 600px) { /* 手機，單欄佈局 */
+            .camera-list-grid {
+                margin: 0 15px; /* 整個列表左右留白 */
+            }
+            .camera-card {
+                width: calc(100% - 0px); /* 100% 寬度，內部的 padding 會保持 */
+                margin: 0 auto 20px auto; /* 居中並保持底部間距 */
+            }
+        }
+    </style>
+{% endblock %}
