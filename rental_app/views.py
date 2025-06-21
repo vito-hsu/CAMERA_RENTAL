@@ -9,11 +9,15 @@ from django.core.mail import send_mail
 from .models import Item, Rental
 from .forms import RentalForm
 
-# 調整商品列表視圖，現在可以根據類別過濾
+# 調整商品列表視圖，現在可以根據類別過濾和租金排序
 def item_list(request, category=None):
     """
-    顯示所有或特定類別商品的列表。
+    顯示所有或特定類別商品的列表，並可根據租金排序。
     """
+    # 獲取排序參數，預設為 None
+    # 'sort_by' 預期值為 'price_asc' (價格升序) 或 'price_desc' (價格降序)
+    sort_by = request.GET.get('sort_by')
+
     if category:
         items = Item.objects.filter(category=category)
         page_title = "所有商品" # 預設標題
@@ -28,7 +32,20 @@ def item_list(request, category=None):
         items = Item.objects.all()
         page_title = "所有商品" # 如果沒有指定類別，則顯示「所有商品」
 
-    return render(request, 'rental_app/item_list.html', {'items': items, 'page_title': page_title})
+    # --- 新增排序邏輯 ---
+    if sort_by == 'price_asc':
+        items = items.order_by('price_per_day')
+    elif sort_by == 'price_desc':
+        items = items.order_by('-price_per_day')
+    # 預設排序或沒有指定排序時，保持原來的排序 (或您可以設定一個預設排序)
+    # 這裡 'ordering = ['name']' 已經在 models.py 的 Meta 中定義了，會自動應用
+
+    # 將當前的 sort_by 參數也傳遞給模板，以便在模板中顯示當前選擇
+    return render(request, 'rental_app/item_list.html', {
+        'items': items,
+        'page_title': page_title,
+        'sort_by': sort_by # 將當前的排序方式傳遞給模板
+    })
 
 # 詳情頁面現在處理通用的 Item
 def item_detail(request, pk):
@@ -46,13 +63,10 @@ def rent_item(request, pk):
     """
     item = get_object_or_404(Item, pk=pk)
     if request.method == 'POST':
-        # 修正：在初始化 RentalForm 時，預先將 item 關聯到 Rental 實例
-        # 這樣表單的 clean 方法在驗證時就能正確訪問 item
         form = RentalForm(request.POST, instance=Rental(item=item))
         if form.is_valid():
             with transaction.atomic():
-                # 因為 item 已經通過 instance 傳遞，save() 會自動關聯 item
-                rental = form.save() # 直接保存，不再需要 commit=False 和手動賦值
+                rental = form.save()
 
                 # --- 發送 Email 通知管理員 ---
                 admin_subject = f"新商品租賃請求：{item.name} ({item.get_category_display()})"

@@ -1,10 +1,37 @@
-<!-- rental_app/templates/rental_app/item_list.html -->
 {% extends 'base.html' %}
 
 {% block title %}{{ page_title }}{% endblock %} {# 標題變為動態的 page_title #}
 
 {% block content %}
     <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">{{ page_title }}</h2>
+
+    {# --- 新增排序控制區塊 --- #}
+    <div class="sort-controls">
+        <label for="sort-by-select">排序依據:</label>
+        <select id="sort-by-select" onchange="location = this.value;">
+            {# 獲取當前 URL 的路徑，以便在切換排序時保留分類過濾 #}
+            {% url 'item_list' as base_item_list_url %}
+            {% if category %}
+                {# 如果有 category 參數，使用對應的分類 URL #}
+                {% if category == 'camera' %}
+                    {% url 'camera_list' as current_base_url %}
+                {% elif category == 'lens' %}
+                    {% url 'lens_list' as current_base_url %}
+                {% elif category == 'other' %}
+                    {% url 'other_list' as current_base_url %}
+                {% endif %}
+            {% else %}
+                {# 如果沒有 category 參數，使用通用的 item_list URL #}
+                {% url 'item_list' as current_base_url %}
+            {% endif %}
+
+            <option value="{{ current_base_url }}" {% if not sort_by %}selected{% endif %}>預設排序 (名稱)</option>
+            <option value="{{ current_base_url }}?sort_by=price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>租金：由低到高</option>
+            <option value="{{ current_base_url }}?sort_by=price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>租金：由高到低</option>
+        </select>
+    </div>
+    {# --- 排序控制區塊結束 --- #}
+
     <div class="item-list-grid"> {# 類別名變為 item-list-grid #}
         {% for item in items %} {# 變數名變為 item #}
             <div class="item-card"> {# 類別名變為 item-card #}
@@ -63,6 +90,40 @@
     </script>
 
     <style>
+        /* 新增的排序控制區塊樣式 */
+        .sort-controls {
+            text-align: right;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .sort-controls label {
+            font-size: 1.1em;
+            color: #555;
+            margin-right: 10px;
+            font-weight: 500;
+        }
+
+        .sort-controls select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #fff;
+            font-size: 1em;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .sort-controls select:focus {
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
         /* 樣式名稱也從 camera- 變更為 item- */
         .item-list-grid {
             margin: 0 auto;
@@ -154,6 +215,9 @@
             .item-card {
                 width: calc(50% - 20px);
             }
+            .sort-controls {
+                justify-content: center; /* 在小螢幕上居中 */
+            }
         }
         @media (max-width: 600px) {
             .item-list-grid {
@@ -162,6 +226,15 @@
             .item-card {
                 width: calc(100% - 0px);
                 margin: 0 auto 20px auto;
+            }
+            .sort-controls {
+                flex-direction: column; /* 在小螢幕上垂直排列 */
+                align-items: flex-start;
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            .sort-controls label {
+                margin-bottom: 5px;
             }
         }
     </style>

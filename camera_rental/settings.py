@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config, Csv # Csv 用於解析逗號分隔的列表
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,9 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-q1*dkfqvt(j^8io*brfc()d1=1ld!p0(@x*3gt1@n=7$(8jmue'
+SECRET_KEY = config('SECRET_KEY') # 從 .env 讀取
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -128,13 +128,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Email Configuration (用於發送管理員通知郵件)
 # ----------------------------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # 例如：'smtp.gmail.com' 或 'smtp-mail.outlook.com'
-EMAIL_PORT = 587             # 例如：587 (TLS) 或 465 (SSL)
-EMAIL_USE_TLS = True         # 對於 587 端口通常為 True
-EMAIL_HOST_USER = 'garraypierce@gmail.com' # 發送郵件的 Email 帳號
-EMAIL_HOST_PASSWORD = 'nfaicovzpivcifbj' # 發送郵件的 Email 密碼或應用程式密碼 (如果是 Gmail，強烈建議使用應用程式密碼)
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER # 預設的寄件者 Email
-SERVER_EMAIL = EMAIL_HOST_USER # 伺服器發送錯誤郵件的 Email
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER') # 從 .env 讀取
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD') # 從 .env 讀取
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
 
 # 管理員 Email (用於接收租約通知)
-ADMIN_EMAIL = 'garraypierce@gmail.com' # 管理員的 Email 地址
+ADMIN_EMAIL = config('ADMIN_EMAIL') # 從 .env 讀取
+
+
