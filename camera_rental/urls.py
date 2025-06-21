@@ -20,4 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('rental_app.urls')), # 包含 rental_app 的 URL
+    # ... 其他您已有的 URL 模式
 ]

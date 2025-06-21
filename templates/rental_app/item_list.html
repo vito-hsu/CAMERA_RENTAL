@@ -1,18 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ page_title }}{% endblock %} {# 標題變為動態的 page_title #}
+{% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
-    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">{{ page_title }}</h2>
+    {# 更精緻的頁面標題區塊 #}
+    <div class="text-center mb-5 pb-4 custom-header-section">
+        <h2 class="display-4 fw-bolder text-dark mb-2 animate__animated animate__fadeInDown">
+            {{ page_title }}
+        </h2>
+        <p class="lead text-muted fst-italic animate__animated animate__fadeInUp animate__delay-0-5s">
+            探索我們豐富的專業攝影器材，捕捉每一個精彩瞬間。
+        </p>
+        <div class="header-divider animate__animated animate__fadeInUp animate__delay-0-8s"></div>
+    </div>
 
-    {# --- 新增排序控制區塊 --- #}
-    <div class="sort-controls">
-        <label for="sort-by-select">排序依據:</label>
-        <select id="sort-by-select" onchange="location = this.value;">
-            {# 獲取當前 URL 的路徑，以便在切換排序時保留分類過濾 #}
+    {# --- 排序控制區塊 --- #}
+    <div class="d-flex justify-content-end align-items-center mb-4 p-3 bg-white rounded-3 shadow-sm custom-sort-controls animate__animated animate__fadeIn animate__delay-1s">
+        <label for="sort-by-select" class="form-label text-secondary me-3 mb-0 fw-bold fs-6">排序依據:</label>
+        <select id="sort-by-select" class="form-select form-select-sm w-auto custom-select-fancy" onchange="location = this.value;">
             {% url 'item_list' as base_item_list_url %}
             {% if category %}
-                {# 如果有 category 參數，使用對應的分類 URL #}
                 {% if category == 'camera' %}
                     {% url 'camera_list' as current_base_url %}
                 {% elif category == 'lens' %}
@@ -21,7 +28,6 @@
                     {% url 'other_list' as current_base_url %}
                 {% endif %}
             {% else %}
-                {# 如果沒有 category 參數，使用通用的 item_list URL #}
                 {% url 'item_list' as current_base_url %}
             {% endif %}
 
@@ -32,52 +38,97 @@
     </div>
     {# --- 排序控制區塊結束 --- #}
 
-    <div class="item-list-grid"> {# 類別名變為 item-list-grid #}
-        {% for item in items %} {# 變數名變為 item #}
-            <div class="item-card"> {# 類別名變為 item-card #}
-                {% if item.image_url %}
-                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="item-image" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e0e0e0/333333?text=無圖片';">
-                {% else %}
-                    <img src="https://placehold.co/400x300/e0e0e0/333333?text=無圖片" alt="Placeholder Image" class="item-image">
-                {% endif %}
-                <div class="item-info"> {# 類別名變為 item-info #}
-                    <h3>{{ item.name }}</h3>
-                    <p class="description">{{ item.description|default:"無描述" }}</p>
-                    <p class="price">每日租金: NT$<span class="amount">{{ item.price_per_day }}</span></p>
-                    <p class="availability">狀態:
-                        {% if item.is_available %} {# 變數名變為 item #}
-                            <span class="available">✅ 可用</span>
-                        {% else %}
-                            <span class="unavailable">❌ 不可用</span>
-                        {% endif %}
-                    </p>
-                    {# 根據商品可用性條件性顯示按鈕 #}
-                    {% if item.is_available %} {# 變數名變為 item #}
-                        <a href="{% url 'item_detail' item.pk %}" class="btn btn-secondary view-detail-btn">查看詳情</a> {# 變更 URL name #}
+    {# Bootstrap row for grid layout + Masonry #}
+    <div class="row item-list-grid g-4 justify-content-center animate__animated animate__fadeInUp animate__delay-1-2s">
+        {% for item in items %}
+            {# 主要修改點：col-md-6 改為 col-md-4，col-lg-4 改為 col-lg-3 #}
+            <div class="col-12 col-md-4 col-lg-3 d-flex align-items-stretch">
+                {# Enhanced Bootstrap Card Structure with custom styles #}
+                <div class="card item-card h-100 shadow-lg border-0 rounded-4 overflow-hidden position-relative">
+                    {% if item.image_url %}
+                        <div class="item-image-wrapper">
+                            <img src="{{ item.image_url }}" class="card-img-top object-fit-cover" alt="{{ item.name }}" loading="lazy" style="height: 250px;">
+                            <div class="image-overlay"></div> {# Subtle overlay for image #}
+                        </div>
                     {% else %}
-                        <span class="btn btn-disabled view-detail-btn">已預訂</span>
+                        <div class="item-image-wrapper">
+                            <img src="https://placehold.co/400x300/e0e0e0/333333?text=無圖片" class="card-img-top object-fit-cover" alt="Placeholder Image" loading="lazy" style="height: 250px;">
+                            <div class="image-overlay"></div>
+                        </div>
                     {% endif %}
+                    
+                    <div class="card-body d-flex flex-column p-4">
+                        <h3 class="card-title text-dark fw-bold mb-2 fs-4 text-truncate" title="{{ item.name }}">{{ item.name }}</h3>
+                        <p class="card-text text-muted mb-3 flex-grow-1 fs-6 item-description-clamp">{{ item.description|default:"暫無描述。" }}</p>
+                        
+                        <p class="mb-2 fs-5 fw-bold text-primary">
+                            <i class="bi bi-currency-dollar me-1"></i> 每日租金: NT$<span class="amount">{{ item.price_per_day }}</span>
+                        </p>
+                        
+                        <p class="card-text mb-4 fs-6 text-muted">狀態:
+                            {% if item.is_available %}
+                                <span class="badge bg-success available-pulse">✅ 可用</span>
+                            {% else %}
+                                <span class="badge bg-danger unavailable-static">❌ 不可用</span>
+                            {% endif %}
+                        </p>
+                        
+                        <div class="mt-auto">
+                            {% if item.is_available %}
+                                <a href="{% url 'item_detail' item.pk %}" class="btn custom-btn custom-btn-secondary w-100 btn-fancy-hover">
+                                    <i class="bi bi-info-circle me-2"></i>查看詳情
+                                </a>
+                            {% else %}
+                                <button type="button" class="btn btn-secondary w-100 disabled-button-style" disabled>
+                                    <i class="bi bi-calendar-check me-2"></i>已預訂
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
         {% empty %}
-            <p style="text-align: center; grid-column: 1 / -1; color: #777; margin-top: 50px; font-size: 1.1em;">目前沒有可租賃的品項。</p>
+            {# 更具藝術感的空狀態 #}
+            <div class="col-12 py-5 my-5 text-center empty-state-card animate__animated animate__fadeInUp">
+                <div class="icon-wrapper mb-4 animate__animated animate__bounceIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-camera-reels-fill text-info" viewBox="0 0 16 16">
+                        <path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                        <path d="M9 6h6a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/>
+                        <path d="M9 3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V3z"/>
+                        <path d="M9 0a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V0zM13 3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V3z"/>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="#dc3545" class="bi bi-x-circle-fill text-danger position-absolute top-0 start-50 translate-middle" viewBox="0 0 16 16">
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
+                    </svg>
+                </div>
+                <p class="fs-3 text-muted mb-3 fw-bold">目前沒有可租賃的攝影器材。</p>
+                <p class="text-secondary fs-5 mb-4">我們正在積極更新商品庫，請稍後再來看看！</p>
+                <a href="{% url 'about_us' %}" class="btn custom-btn custom-btn-primary btn-fancy-hover-small">
+                    <i class="bi bi-question-circle me-2"></i> 聯絡我們了解更多
+                </a>
+            </div>
         {% endfor %}
     </div>
 
-    <div style="text-align: center; margin-top: 50px;">
-        <a href="{% url 'my_rentals' %}" class="btn btn-secondary">查看所有租賃訂單</a>
+    {# Call to Action / Footer Button Section #}
+    <div class="text-center mt-5 pt-4 custom-footer-cta animate__animated animate__fadeInUp animate__delay-1-5s">
+        <p class="lead text-muted mb-4 fs-4">想要了解您的所有租賃訂單嗎？</p>
+        <a href="{% url 'my_rentals' %}" class="btn custom-btn custom-btn-primary btn-lg rounded-pill shadow-lg animate-cta-button">
+            <i class="bi bi-receipt me-2"></i>查看我的所有租賃訂單
+        </a>
     </div>
 
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
     <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var elem = document.querySelector('.item-list-grid'); {# 類別名變為 item-list-grid #}
+            var elem = document.querySelector('.item-list-grid');
             if (elem) {
                 var msnry = new Masonry(elem, {
-                    itemSelector: '.item-card', {# 類別名變為 item-card #}
-                    columnWidth: '.item-card', {# 類別名變為 item-card #}
-                    gutter: 20,
+                    itemSelector: '.col-12', 
+                    {# 主要修改點：columnWidth 改為 '.col-lg-3' #}
+                    columnWidth: '.col-lg-3', 
+                    gutter: 24, 
                     percentPosition: true,
                     resize: true
                 });
@@ -88,153 +139,280 @@
             }
         });
     </script>
+    
+    {# 引入 Animate.css 以實現更多動畫效果 #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
+    {# Custom Styles for even fancier elements #}
     <style>
-        /* 新增的排序控制區塊樣式 */
-        .sort-controls {
-            text-align: right;
-            margin-bottom: 20px;
-            padding: 10px 0;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
+        /* CSS Variables for a Custom Palette (optional, but good practice for "fancy") */
+        :root {
+            --primary-accent: #5a7d9b; /* Your existing primary color */
+            --secondary-accent: #a8c1f0; /* Your existing secondary color */
+            --light-grey: #f8f9fa;
+            --medium-grey: #e9ecef;
+            --dark-grey-text: #343a40;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --card-border-light: #f0f0f0;
+            --card-shadow-light: rgba(0,0,0,0.08);
+            --card-shadow-hover: rgba(0,0,0,0.2);
+            --transition-ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .sort-controls label {
-            font-size: 1.1em;
-            color: #555;
-            margin-right: 10px;
-            font-weight: 500;
+        /* Fancy Header Enhancements */
+        .custom-header-section {
+            padding-bottom: 2.5rem;
+        }
+        .custom-header-section h2 {
+            font-family: 'Inter', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05); /* Subtle text shadow */
+        }
+        .custom-header-section .lead {
+            font-family: 'Inter', sans-serif;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .header-divider {
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent)); /* Gradient divider */
+            margin: 1.5rem auto 0 auto;
+            border-radius: 2px;
         }
 
-        .sort-controls select {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background-color: #fff;
-            font-size: 1em;
-            color: #333;
-            cursor: pointer;
+        /* Sort Controls Customization */
+        .custom-sort-controls {
+            border: 1px solid var(--medium-grey);
+            padding: 1rem 1.5rem !important;
+            transition: all 0.3s var(--transition-ease-out-quad);
+        }
+        .custom-sort-controls:hover {
+             box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
+        }
+        .custom-select-fancy {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-color: var(--medium-grey);
+            transition: all 0.3s ease;
+            appearance: none; /* Remove default arrow */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); /* Custom SVG arrow */
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+        }
+        .custom-select-fancy:focus {
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 0 0.25rem rgba(90,125,155,0.25);
             outline: none;
-            transition: border-color 0.3s ease;
         }
 
-        .sort-controls select:focus {
-            border-color: #4A90E2;
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-        }
-
-        /* 樣式名稱也從 camera- 變更為 item- */
-        .item-list-grid {
-            margin: 0 auto;
-            position: relative;
-        }
+        /* Item Card Enhancements */
         .item-card {
-            width: calc(33.333% - 20px);
-            margin-bottom: 20px;
-
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid #eeeeee;
+            transition: transform 0.5s var(--transition-ease-out-quad), box-shadow 0.5s var(--transition-ease-out-quad), border-color 0.5s var(--transition-ease-out-quad);
+            border: 1px solid var(--card-border-light);
+            box-shadow: 0 6px 18px var(--card-shadow-light); /* More refined initial shadow */
+            border-bottom: 4px solid transparent; /* For hover underline effect */
         }
         .item-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-        }
-        .item-image {
-            width: 100%;
-            height: auto;
-            max-height: 250px;
-            object-fit: cover;
-            border-bottom: 1px solid #eeeeee;
-        }
-        .item-info {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-        .item-info h3 {
-            margin-top: 0;
-            color: #333333;
-            font-size: 1.5em;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        .item-info .description {
-            font-size: 0.95em;
-            color: #666;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .item-info .price {
-            font-weight: bold;
-            color: #4A90E2;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-        .item-info .price .amount {
-            font-size: 1.2em;
-            font-weight: 700;
-        }
-        .item-info .availability {
-            font-size: 0.9em;
-            margin-bottom: 20px;
-            color: #777;
-        }
-        .availability .available {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-        .availability .unavailable {
-            color: #F44336;
-            font-weight: bold;
-        }
-        .view-detail-btn {
-            width: 100%;
-            margin-top: auto;
-            box-sizing: border-box;
-        }
-        .btn-disabled {
-            background-color: #cccccc;
-            color: #666666;
-            cursor: not-allowed;
-            box-shadow: none;
-            opacity: 0.8;
-            pointer-events: none;
-            text-decoration: none;
+            transform: translateY(-12px) scale(1.03); /* More pronounced lift and scale */
+            box-shadow: 0 20px 40px var(--card-shadow-hover); /* Deeper, wider shadow */
+            border-color: var(--primary-accent); /* Border color changes on hover */
+            border-bottom: 4px solid var(--primary-accent); /* Blue underline */
         }
 
-        /* 響應式調整 */
-        @media (max-width: 992px) {
-            .item-card {
-                width: calc(50% - 20px);
+        .item-image-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--medium-grey); /* Separator */
+        }
+
+        .item-image-wrapper img {
+            transition: transform 0.6s var(--transition-ease-out-quad), filter 0.6s var(--transition-ease-out-quad);
+        }
+
+        .item-card:hover .item-image-wrapper img {
+            transform: scale(1.1); /* Stronger zoom on image hover */
+            filter: brightness(0.85); /* Slightly darken image */
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.2) 100%); /* Radial gradient overlay */
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none; /* Allow clicks to pass through */
+        }
+
+        .item-card:hover .image-overlay {
+            opacity: 1; /* Show overlay on hover */
+        }
+
+        /* Description clamping for consistent card height */
+        .item-description-clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Limit to 3 lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: 3.6em; /* Approx height for 3 lines */
+            line-height: 1.2; /* Tighter line height for description */
+        }
+
+        /* Availability Badges - More distinct Pulsating effect */
+        @keyframes pulse-animation {
+            0% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); /* Success color */
             }
-            .sort-controls {
-                justify-content: center; /* 在小螢幕上居中 */
+            70% {
+                box-shadow: 0 0 0 15px rgba(40, 167, 69, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
             }
         }
-        @media (max-width: 600px) {
-            .item-list-grid {
-                margin: 0 15px;
+
+        .available-pulse {
+            animation: pulse-animation 2s infinite cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-radius: 1rem; /* More rounded pill shape */
+            padding: .4em .8em;
+            font-weight: 700;
+        }
+        
+        .unavailable-static {
+             border-radius: 1rem; /* More rounded pill shape */
+             padding: .4em .8em;
+             font-weight: 700;
+             opacity: 0.8;
+        }
+
+        /* Button Hover Effects - More pronounced and themed */
+        /* 注意：這些按鈕樣式已移動到 base.html 的 <style> 區塊中，此處僅為備份或特定覆蓋 */
+        .btn-fancy-hover {
+            /* 這些樣式現在主要由 base.html 中的 .custom-btn 和 .custom-btn-secondary 繼承 */
+            /* 如果需要覆蓋，可以在這裡重新定義 */
+        }
+        /* ... 其他按鈕樣式 ... */
+
+        /* Empty State Styling - More central and visually appealing */
+        .empty-state-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 60px 30px;
+            max-width: 600px;
+            margin: 80px auto; /* Centered with more vertical margin */
+            border: 1px solid #e0e0e0;
+            position: relative; /* For icon positioning */
+            overflow: hidden;
+        }
+        .empty-state-card::before { /* Subtle background pattern */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(248, 248, 248, 0.7) 25%, transparent 25%, transparent 75%, rgba(248, 248, 248, 0.7) 75%, rgba(248, 248, 248, 0.7)), linear-gradient(45deg, rgba(248, 248, 248, 0.7) 25%, transparent 25%, transparent 75%, rgba(248, 248, 248, 0.7) 75%, rgba(248, 248, 248, 0.7));
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            opacity: 0.5;
+            z-index: 0;
+        }
+        .empty-state-card > * { /* Ensure content is above the pattern */
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-state-card .icon-wrapper {
+            position: relative;
+            display: inline-block; /* To contain the absolute positioned icon */
+        }
+        .empty-state-card .icon-wrapper svg.bi-x-circle-fill { /* Red X icon over camera */
+            position: absolute;
+            top: -10px; /* Adjust as needed */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .empty-state-card .btn {
+            font-weight: 600;
+        }
+        /* .btn-fancy-hover-small 現在由 base.html 定義 */
+
+
+        /* Animated Call to Action Button */
+        /* 這些樣式現在主要由 base.html 中的 .animate-cta-button 繼承 */
+        /* 如果需要覆蓋，可以在這裡重新定義 */
+
+
+        /* Responsive Adjustments (more refined) */
+        @media (max-width: 992px) {
+            .item-card:hover {
+                transform: translateY(-8px) scale(1.01); /* Slightly less dramatic for tablets */
+                box-shadow: 0 12px 25px rgba(0,0,0,0.18);
+            }
+        }
+        @media (max-width: 768px) {
+            .display-4 {
+                font-size: 2.5rem;
+            }
+            .lead {
+                font-size: 1.1rem;
+            }
+            .header-divider {
+                width: 60px;
+                margin-top: 1rem;
+            }
+            .custom-sort-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0.8rem 1rem !important;
+            }
+            .custom-sort-controls label {
+                margin-bottom: 0.5rem;
+            }
+            .custom-select-fancy {
+                width: 100%;
             }
             .item-card {
-                width: calc(100% - 0px);
-                margin: 0 auto 20px auto;
+                 margin: 0 auto 1.5rem auto;
             }
-            .sort-controls {
-                flex-direction: column; /* 在小螢幕上垂直排列 */
-                align-items: flex-start;
-                padding-left: 15px;
-                padding-right: 15px;
+            .item-description-clamp {
+                -webkit-line-clamp: 4; /* More lines on smaller cards */
+                min-height: 4.8em;
             }
-            .sort-controls label {
-                margin-bottom: 5px;
+            .empty-state-card {
+                padding: 40px 20px;
+                margin: 40px auto;
+            }
+            .empty-state-card .icon-wrapper svg {
+                width: 70px;
+                height: 70px;
+            }
+            .fs-3 {
+                font-size: 1.75rem !important;
+            }
+            .fs-5 {
+                font-size: 1rem !important;
+            }
+            .animate-cta-button, .animate__animated {
+                animation: none !important; /* Disable heavy animations on small devices for performance */
+            }
+            .animate-cta-button:hover {
+                transform: translateY(-2px) scale(1.01);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
+            .animate-cta-button::before { /* Disable shine effect */
+                display: none;
+            }
+        }
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1rem;
             }
         }
     </style>

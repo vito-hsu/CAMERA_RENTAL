@@ -135,3 +135,9 @@ def about_us(request):
     顯示關於我們頁面。
     """
     return render(request, 'rental_app/about_us.html')
+
+def contact_us_view(request):
+    """
+    渲染聯絡我們頁面
+    """
+    return render(request, 'rental_app/contact_us.html')

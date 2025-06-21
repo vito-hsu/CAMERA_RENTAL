@@ -21,4 +21,6 @@ urlpatterns = [
     path('my-rentals/', views.my_rentals, name='my_rentals'),
     # 關於我們
     path('about-us/', views.about_us, name='about_us'),
+    # 聯繫我們
+    path('contact/', views.contact_us_view, name='contact_us'),
 ]
