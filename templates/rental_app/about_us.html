@@ -1,3 +1,4 @@
+<!-- rental_app/templates/rental_app/about_us.html -->
 {% extends 'base.html' %}
 
 {% block title %}關於我們{% endblock %}
@@ -15,256 +16,178 @@
     </div>
 
     <div class="about-content">
-        <h2 style="text-align: center; color: #333333; margin-bottom: 60px; font-size: 2.2em; font-weight: 700;" class="fade-in-section">深入了解相機租約中心</h2>
-
-        <div class="info-block left-align fade-in-section">
-            <h3><span class="icon">✨</span> 歡迎來到相機租約中心</h3>
-            <p>我們深信，每一位熱愛攝影的人都應該擁有體驗高品質器材的機會。無論您是經驗豐富的專業攝影師，正在尋找特定設備來完成您的傑作；還是剛踏入攝影世界的新手，渴望嘗試不同類型的相機和鏡頭來激發創意，我們都為您準備了最完善的解決方案。</p>
-            <p>在這裡，攝影不再是高昂的投資，而是觸手可及的樂趣。</p>
-        </div>
-
-        <div class="info-block right-align fade-in-section">
-            <h3><span class="icon">📸</span> 我們的精選設備</h3>
-            <p>我們引以為傲的是，我們庫存中的每一台相機、每一個鏡頭，都經過嚴格的篩選和細緻的維護。從經典的全畫幅單反，到最新的無反旗艦，再到各種專業級鏡頭和攝影配件，我們確保每件設備都能以最佳狀態交付到您手中，助您捕捉每一個精彩瞬間。</p>
-            <p>定期更新與專業校準是我們對品質的承諾。我們的目標是讓您無憂無慮地專注於創作，而設備的品質與性能則由我們來把關。</p>
-        </div>
-
-        <h3 style="margin-top: 80px; text-align: center; color: #333333; font-size: 2em; font-weight: 700;" class="fade-in-section">我們的核心價值</h3>
-        <div class="values-grid fade-in-section">
-            <div class="value-item">
-                <span class="value-icon">🥇</span>
-                <h4>優質設備</h4>
-                <p>我們提供業界領先的攝影器材，確保性能卓越，助您作品更上一層樓。</p>
+        {# 深入了解相機租約中心 #}
+        <h2 class="section-trigger" data-target="intro-content" style="margin-top: 0;">深入了解相機租約中心</h2> {# 移除 <span class="arrow">▼</span> #}
+        <div id="intro-content" class="content-wrapper">
+            <div class="info-block left-align">
+                <h3><span class="icon">✨</span> 歡迎來到相機租約中心</h3>
+                <p>我們深信，每一位熱愛攝影的人都應該擁有體驗高品質器材的機會。無論您是經驗豐富的專業攝影師，正在尋找特定設備來完成您的傑作；還是剛踏入攝影世界的新手，渴望嘗試不同類型的相機和鏡頭來激發創意，我們都為您準備了最完善的解決方案。</p>
+                <p>在這裡，攝影不再是高昂的投資，而是觸手可及的樂趣。</p>
             </div>
-            <div class="value-item">
-                <span class="value-icon">🗓️</span>
-                <h4>彈性租賃</h4>
-                <p>多樣化的租期選擇與便捷的預訂流程，滿足您的短期或長期需求。</p>
-            </div>
-            <div class="value-item">
-                <span class="value-icon">🤝</span>
-                <h4>專業支援</h4>
-                <p>我們的攝影專家團隊隨時準備為您提供諮詢與技術協助。</p>
-            </div>
-            <div class="value-item">
-                <span class="value-icon">💡</span>
-                <h4>創新體驗</h4>
-                <p>不斷引入新技術與服務，提升您的每一次租賃體驗。</p>
+
+            <div class="info-block right-align">
+                <h3><span class="icon">📸</span> 我們的精選設備</h3>
+                <p>我們引以為傲的是，我們庫存中的每一台相機、每一個鏡頭，都經過嚴格的篩選和細緻的維護。從經典的全畫幅單反，到最新的無反旗艦，再到各種專業級鏡頭和攝影配件，我們確保每件設備都能以最佳狀態交付到您手中，助您捕捉每一個精彩瞬間。</p>
+                <p>定期更新與專業校準是我們對品質的承諾。我們的目標是讓您無憂無慮地專注於創作，而設備的品質與性能則由我們來把關。</p>
             </div>
         </div>
 
-        <h3 style="margin-top: 80px; text-align: center; color: #333333; font-size: 2em; font-weight: 700;" class="fade-in-section">我們的旅程</h3>
-        <div class="timeline-container-interactive fade-in-section">
-            <div class="timeline-card-interactive timeline-card-left">
-                <div class="timeline-dot-interactive"></div>
-                <div class="timeline-content-wrapper">
-                    <div class="timeline-header" tabindex="0" role="button" aria-expanded="false">
+        {# 我們的核心價值 #}
+        <h3 class="section-trigger" data-target="values-content">我們的核心價值</h3> {# 移除 <span class="arrow">▼</span> #}
+        <div id="values-content" class="content-wrapper">
+            <div class="values-grid">
+                <div class="value-item">
+                    <span class="value-icon">🥇</span>
+                    <h4>優質設備</h4>
+                    <p>我們提供業界領先的攝影器材，確保性能卓越，助您作品更上一層樓。</p>
+                </div>
+                <div class="value-item">
+                    <span class="value-icon">🗓️</span>
+                    <h4>彈性租賃</h4>
+                    <p>多樣化的租期選擇與便捷的預訂流程，滿足您的短期或長期需求。</p>
+                </div>
+                <div class="value-item">
+                    <span class="value-icon">🤝</span>
+                    <h4>專業支援</h4>
+                    <p>我們的攝影專家團隊隨時準備為您提供諮詢與技術協助。</p>
+                </div>
+                <div class="value-item">
+                    <span class="value-icon">💡</span>
+                    <h4>創新體驗</h4>
+                    <p>不斷引入新技術與服務，提升您的每一次租賃體驗。</p>
+                </div>
+            </div>
+        </div>
+
+        {# 我們的旅程時間軸 #}
+        <h3 class="section-trigger" data-target="journey-content">我們的旅程</h3> {# 移除 <span class="arrow">▼</span> #}
+        <div id="journey-content" class="content-wrapper">
+            <div class="timeline-container">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
                         <h4>2018 - 啟程：熱情萌芽</h4>
-                        <span class="toggle-icon">＋</span>
-                    </div>
-                    <div class="timeline-detail">
                         <p>相機租約中心由一群對攝影充滿熱情的創辦人成立，旨在降低攝影器材的入門門檻。</p>
                     </div>
                 </div>
-            </div>
-            <div class="timeline-card-interactive timeline-card-right">
-                <div class="timeline-dot-interactive"></div>
-                <div class="timeline-content-wrapper">
-                    <div class="timeline-header" tabindex="0" role="button" aria-expanded="false">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
                         <h4>2020 - 成長：服務擴展</h4>
-                        <span class="toggle-icon">＋</span>
-                    </div>
-                    <div class="timeline-detail">
                         <p>隨著用戶需求增長，我們引入了更多品牌和型號的相機，並優化了線上租賃流程。</p>
                     </div>
                 </div>
-            </div>
-            <div class="timeline-card-interactive timeline-card-left">
-                <div class="timeline-dot-interactive"></div>
-                <div class="timeline-content-wrapper">
-                    <div class="timeline-header" tabindex="0" role="button" aria-expanded="false">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
                         <h4>2022 - 創新：智能升級</h4>
-                        <span class="toggle-icon">＋</span>
-                    </div>
-                    <div class="timeline-detail">
                         <p>整合智能客戶服務系統，提供更快速、精準的諮詢服務。</p>
                     </div>
                 </div>
-            </div>
-            <div class="timeline-card-interactive timeline-card-right">
-                <div class="timeline-dot-interactive"></div>
-                <div class="timeline-content-wrapper">
-                    <div class="timeline-header" tabindex="0" role="button" aria-expanded="false">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
                         <h4>2024 - 未來：持續探索</h4>
-                        <span class="toggle-icon">＋</span>
-                    </div>
-                    <div class="timeline-detail">
                         <p>我們將持續探索最新科技與設備，為攝影愛好者提供更多可能性。</p>
                     </div>
                 </div>
             </div>
         </div>
-        <h3 style="margin-top: 80px; text-align: center; color: #333333; font-size: 2em; font-weight: 700;" class="fade-in-section">我們的團隊</h3>
-        <div class="team-grid fade-in-section">
-            <div class="team-member">
-                <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                     alt="團隊成員 A" class="team-photo" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e0e0e0/333333?text=A';">
-                <h4>陳經理</h4>
-                <p class="role">營運經理</p>
-                <p class="bio">擁有十年租賃行業經驗，確保流程順暢高效。</p>
-            </div>
-            <div class="team-member">
-                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                     alt="團隊成員 B" class="team-photo" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e0e0e0/333333?text=B';">
-                <h4>林攝影師</h4>
-                <p class="role">攝影顧問</p>
-                <p class="bio">資深攝影師，為您提供專業器材選擇建議。</p>
-            </div>
-            <div class="team-member">
-                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                     alt="團隊成員 C" class="team-photo" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e0e0e0/333333?text=C';">
-                <h4>張技術員</h4>
-                <p class="role">設備維護</p>
-                <p class="bio">確保每台設備都經過嚴格檢測與校準，性能優良。</p>
-            </div>
-        </div>
 
-        <div class="contact-info fade-in-section" style="margin-top: 80px; text-align: center;">
-            <p style="font-size: 1.2em; font-weight: 500; color: #333;">有任何疑問？請隨時聯繫我們！</p>
-            <p>電子郵件: <a href="mailto:garraypierce@gmail.com" class="btn-link">garraypierce@gmail.com</a></p>
+        {# 我們的團隊 #}
+        <h3 class="section-trigger" data-target="team-content">我們的團隊</h3> {# 移除 <span class="arrow">▼</span> #}
+        <div id="team-content" class="content-wrapper">
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                         alt="團隊成員 A" class="team-photo" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e0e0e0/333333?text=A';">
+                    <h4>陳經理</h4>
+                    <p class="role">營運經理</p>
+                    <p class="bio">擁有十年租賃行業經驗，確保流程順暢高效。</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                         alt="團隊成員 B" class="team-photo" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e0e0e0/333333?text=B';">
+                    <h4>林攝影師</h4>
+                    <p class="role">攝影顧問</p>
+                    <p class="bio">資深攝影師，為您提供專業器材選擇建議。</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                         alt="團隊成員 C" class="team-photo" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e0e0e0/333333?text=C';">
+                    <h4>張技術員</h4>
+                    <p class="role">設備維護</p>
+                    <p class="bio">確保每台設備都經過嚴格檢測與校準，性能優良。</p>
+                </div>
+            </div>
+            <div class="contact-info">
+                <p style="font-size: 1.2em; font-weight: 500; color: #333;">有任何疑問？請隨時聯繫我們！</p>
+                <p>電子郵件: <a href="mailto:garraypierce@gmail.com" class="btn-link">garraypierce@gmail.com</a></p>
+            </div>
         </div>
     </div>
 
+    <!-- 返回頂部按鈕 -->
     <button id="backToTopBtn" title="返回頂部">⬆️</button>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 從這段程式碼中選擇所有應進行淡入動畫的區塊
-            // 注意：這裡將 .timeline-item 替換為新的 .timeline-card-interactive
-            const fadeInSections = document.querySelectorAll('.fade-in-section, .timeline-card-interactive');
-            // 選擇需要延遲淡入的特定元素 (如 Hero Section 的文字)
-            const fadeInElements = document.querySelectorAll('.fade-in, .fade-in-delay-1');
             const backToTopBtn = document.getElementById('backToTopBtn');
-
-            // 檢查元素是否在視窗內的可見區域
-            const isElementInViewport = (el) => {
-                const rect = el.getBoundingClientRect();
-                return (
-                    rect.top >= 0 &&
-                    rect.left >= 0 &&
-                    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-                );
+            const sectionTriggers = document.querySelectorAll('.section-trigger');
+            
+            // Function to reveal a section
+            const revealSection = (targetId, triggerElement) => {
+                const targetContent = document.getElementById(targetId);
+                if (targetContent && !targetContent.classList.contains('is-revealed')) {
+                    targetContent.classList.add('is-revealed');
+                    // 由於箭頭已移除，這裡不再需要 active class 來旋轉箭頭
+                    // if (triggerElement) {
+                    //     triggerElement.classList.add('active');
+                    // }
+                }
             };
 
-            // Intersection Observer 的選項，定義何時觸發回調
-            const observerOptions = {
-                root: null, // 觀察器將使用文檔的視窗作為根元素
-                rootMargin: '0px', // 根元素的邊距，用於擴展或縮小根的邊界框
-                threshold: 0.1 // 目標元素可見度的閾值，表示當元素有 10% 進入視圖時觸發
-            };
+            // Event Listeners for section triggers (mouseenter and click)
+            sectionTriggers.forEach(trigger => {
+                const targetId = trigger.dataset.target;
 
-            // 當元素進入或離開視圖時觸發的回調函數
-            const observerCallback = (entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) { // 如果元素進入視圖
-                        entry.target.classList.add('is-visible'); // 添加 'is-visible' 類別來觸發 CSS 動畫
-                        observer.unobserve(entry.target); // 元素進入視圖後，停止觀察該元素
-                    }
+                // On mouse enter, reveal the section
+                trigger.addEventListener('mouseenter', () => {
+                    revealSection(targetId, trigger);
                 });
-            };
 
-            // 創建一個新的 Intersection Observer 實例
-            const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-            // 遍歷所有應觸發動畫的區塊，並將它們添加到觀察器中
-            fadeInSections.forEach(section => observer.observe(section));
-            fadeInElements.forEach(el => observer.observe(el));
-
-            // 頁面載入時檢查元素是否已經在視圖內，如果是則立即添加 'is-visible' 類別
-            // 避免用戶在未滾動時看不到頂部的動畫效果
-            fadeInElements.forEach(el => {
-                if (isElementInViewport(el)) {
-                    el.classList.add('is-visible');
-                }
-            });
-            fadeInSections.forEach(section => {
-                if (isElementInViewport(section)) {
-                    section.classList.add('is-visible');
-                }
+                // On click, also reveal the section (for touch devices or explicit click)
+                trigger.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent default link behavior if any
+                    revealSection(targetId, trigger);
+                });
             });
 
-
-            // 返回頂部按鈕的邏輯
+            // Back to top button logic
             window.addEventListener('scroll', () => {
-                if (window.scrollY > 300) { // 當頁面滾動超過 300px 時顯示按鈕
+                if (window.scrollY > 300) {
                     backToTopBtn.classList.add('show');
-                } else { // 否則隱藏按鈕
+                } else {
                     backToTopBtn.classList.remove('show');
                 }
             });
 
-            // 點擊返回頂部按鈕時，平滑滾動到頁面頂部
             backToTopBtn.addEventListener('click', () => {
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
                 });
             });
-
-
-            // ***** 時間軸互動功能 JavaScript *****
-            const timelineHeaders = document.querySelectorAll('.timeline-header');
-
-            timelineHeaders.forEach(header => {
-                header.addEventListener('click', () => {
-                    const timelineCard = header.closest('.timeline-card-interactive');
-                    const detail = header.nextElementSibling; // timeline-detail
-                    const toggleIcon = header.querySelector('.toggle-icon');
-
-                    // 檢查當前卡片是否已經展開
-                    const isActive = timelineCard.classList.contains('is-active');
-
-                    // 收合所有其他已展開的卡片（可選：如果您希望每次只展開一個）
-                    document.querySelectorAll('.timeline-card-interactive.is-active').forEach(openCard => {
-                        if (openCard !== timelineCard) {
-                            openCard.classList.remove('is-active');
-                            openCard.querySelector('.timeline-detail').style.maxHeight = '0';
-                            openCard.querySelector('.toggle-icon').textContent = '＋';
-                            openCard.querySelector('.timeline-header').setAttribute('aria-expanded', 'false');
-                        }
-                    });
-
-                    // 切換當前卡片的展開狀態
-                    if (isActive) {
-                        timelineCard.classList.remove('is-active');
-                        detail.style.maxHeight = '0'; // 收合
-                        toggleIcon.textContent = '＋';
-                        header.setAttribute('aria-expanded', 'false');
-                    } else {
-                        timelineCard.classList.add('is-active');
-                        // 設置 max-height 為 detail 的實際高度，實現平滑展開
-                        // 這裡使用 scrollHeight 確保內容高度不確定時也能正確展開
-                        detail.style.maxHeight = detail.scrollHeight + 'px';
-                        toggleIcon.textContent = '－';
-                        header.setAttribute('aria-expanded', 'true');
-                    }
-                });
-
-                // 支持鍵盤操作 (Enter 或 Spacebar)
-                header.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault(); // 阻止滾動頁面等預設行為
-                        header.click(); // 觸發點擊事件
-                    }
-                });
-            });
-            // ***** 時間軸互動功能 JavaScript 結束 *****
         });
     </script>
 
     <style>
-        /* Hero Section (首圖區塊) - 保持不變 */
+        /* 新增全域 box-sizing */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Hero Section (首圖區塊) */
         .hero-section {
             position: relative;
             width: 100%;
@@ -315,12 +238,12 @@
             text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
         }
 
-        /* About Content Sections (關於內容區塊) - 保持不變 */
+        /* About Content Sections (關於內容區塊) */
         .about-content {
             font-size: 1.05em;
             line-height: 1.8;
             color: #444;
-            max-width: 900px;
+            max-width: 880px; /* 960px (container max-width) - 2*40px (container padding) */
             margin: 0 auto;
             padding-bottom: 40px;
         }
@@ -331,16 +254,67 @@
             color: #333;
         }
 
+        /* 可折疊內容區塊的標題 */
+        .section-trigger {
+            cursor: pointer;
+            text-align: center;
+            color: #333333;
+            margin-top: 60px; /* 控制區塊間距 */
+            margin-bottom: 20px; /* 標題與內容的間距 */
+            font-size: 2.2em;
+            font-weight: 700;
+            transition: color 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 移除 gap，因為沒有箭頭了 */
+        }
+        .section-trigger:first-of-type {
+            margin-top: 0; /* 第一個標題不需要頂部間距 */
+        }
+        .section-trigger:hover {
+            color: #5a7d9b; /* 懸停時顏色變化 */
+        }
+        /* 移除 .section-trigger .arrow 及其相關樣式 */
+        /* .section-trigger .arrow {
+            transition: transform 0.3s ease;
+            font-size: 0.8em;
+            transform: rotate(0deg);
+        }
+        .section-trigger.active .arrow {
+            transform: rotate(180deg);
+        } */
+
+        /* 可折疊內容區塊的包裹器 */
+        .content-wrapper {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            /* 調整動畫速度至 1.2s */
+            transition: max-height 1.2s ease-in-out, opacity 1.2s ease-in-out, padding 1.2s ease-in-out;
+            padding-top: 0; /* 預設無頂部內邊距 */
+        }
+        .content-wrapper.is-revealed {
+            max-height: 2000px; /* 足夠大的值以顯示所有內容 */
+            opacity: 1;
+            overflow: visible; /* 允許內容溢出，但通常 max-height 已經足夠 */
+            padding-top: 40px; /* 內容顯示時的頂部內邊距 */
+        }
+
+        /* info-block (與 content-wrapper 的 is-revealed 配合使用) */
         .info-block {
             background-color: #ffffff;
             border-radius: 12px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             padding: 40px;
-            margin-bottom: 60px;
+            margin-bottom: 20px; /* 區塊內部間距 */
             border: 1px solid #eee;
             transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
             position: relative;
             overflow: hidden;
+        }
+        .info-block:last-of-type {
+            margin-bottom: 0; /* 最後一個 info-block 移除底部間距 */
         }
         .info-block::before {
             content: '';
@@ -393,15 +367,16 @@
             margin-left: 10px;
         }
         .info-block.right-align h3 {
-            justify-content: flex-end;
+             justify-content: flex-end;
         }
 
-        /* Values Grid (核心價值網格) - 保持不變 */
+        /* Values Grid (核心價值網格) */
         .values-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 30px;
-            margin-top: 40px;
+            margin-top: 0px; /* 由 content-wrapper padding-top 控制 */
+            margin-bottom: 20px; /* 網格底部間距 */
         }
         .value-item {
             background-color: #ffffff;
@@ -454,207 +429,100 @@
             position: relative; z-index: 1;
         }
 
-        /* ***** 這裡開始是「我們的旅程時間軸」的新設計 CSS 部分 (含互動樣式) ***** */
-        .timeline-container-interactive {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 800px;
-            margin: 60px auto;
-            padding: 20px 0;
+        /* Timeline Section (時間軸區塊) */
+        .timeline-container {
             position: relative;
+            max-width: 800px; /* 保持這個寬度，讓內容在其內部對齊 */
+            margin: 0 auto; /* 由 content-wrapper padding-top 控制 */
+            padding: 20px 0;
         }
-
-        .timeline-container-interactive::before { /* 垂直連接線 */
+        .timeline-container::after { /* 時間軸線 */
             content: '';
             position: absolute;
-            width: 2px;
-            background-color: #ddd;
+            width: 4px;
+            background-color: #e0e0e0;
             top: 0;
             bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 0;
+            left: 50%; /* 垂直居中 */
+            margin-left: -2px;
+            border-radius: 2px;
         }
-
-        .timeline-card-interactive {
-            display: flex;
-            align-items: center; /* 垂直居中點和內容 */
-            width: 100%;
-            margin-bottom: 40px;
-            opacity: 0;
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        .timeline-item {
+            padding: 10px 0; /* 移除 timeline-item 本身的左右 padding */
             position: relative;
-            z-index: 1;
+            background-color: inherit;
+            width: 50%; /* 每個項目佔容器寬度的一半 */
+            box-sizing: border-box; /* 確保 padding 不影響寬度計算 */
+            /* 移除 opacity, transform, transition，這些由 content-wrapper 處理 */
         }
 
-        /* 交錯動畫延遲 */
-        .timeline-card-interactive:nth-child(1) { transition-delay: 0.1s; }
-        .timeline-card-interactive:nth-child(2) { transition-delay: 0.3s; }
-        .timeline-card-interactive:nth-child(3) { transition-delay: 0.5s; }
-        .timeline-card-interactive:nth-child(4) { transition-delay: 0.7s; }
-
-        .timeline-card-interactive.is-visible {
-            opacity: 1;
-            transform: translateY(0);
+        .timeline-item:nth-child(odd) { /* 奇數項靠左 */
+            left: 0;
+            text-align: right;
         }
-
-        .timeline-card-left {
-            justify-content: flex-start;
-            padding-right: calc(50% + 20px); /* 為右側留空並跨過中線 */
-            transform: translateX(-50px);
+        .timeline-item:nth-child(even) { /* 偶數項靠右 */
+            left: 50%;
+            text-align: left;
         }
-
-        .timeline-card-right {
-            justify-content: flex-end;
-            padding-left: calc(50% + 20px); /* 為左側留空並跨過中線 */
-            transform: translateX(50px);
-        }
-
-        .timeline-card-interactive.is-visible.timeline-card-left {
-            transform: translateX(0);
-        }
-        .timeline-card-interactive.is-visible.timeline-card-right {
-            transform: translateX(0);
-        }
-
-        .timeline-dot-interactive {
-            width: 24px;
-            height: 24px;
+        .timeline-dot {
+            padding: 8px;
+            position: absolute;
+            width: 16px;
+            height: 16px;
             background-color: #5a7d9b;
             border-radius: 50%;
-            flex-shrink: 0;
-            box-shadow: 0 0 0 4px rgba(90,125,155,0.2);
-            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
+            top: 25px;
+            z-index: 1;
+            box-shadow: 0 0 0 3px rgba(90,125,155,0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
-
-        .timeline-card-left .timeline-dot-interactive {
-            left: calc(50% - 12px);
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -8px;
         }
-        .timeline-card-right .timeline-dot-interactive {
-            left: calc(50% - 12px);
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -8px;
         }
-
-        .timeline-card-interactive:hover .timeline-dot-interactive {
+        .timeline-item:hover .timeline-dot {
             background-color: #4b6a8a;
-            transform: translateX(-50%) scale(1.1);
-            box-shadow: 0 0 0 6px rgba(90,125,155,0.3);
+            transform: scale(1.1);
         }
-
-        .timeline-content-wrapper {
+        .timeline-content {
+            padding: 20px 25px; /* 內容本身的內邊距，提供內容與邊界間的緩衝 */
             background-color: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            padding: 20px 25px; /* 調整內邊距 */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
             border: 1px solid #eee;
-            flex-grow: 1;
-            max-width: 45%;
             position: relative;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden; /* 確保內容展開時不會溢出圓角 */
+            /* 移除 opacity, transition，這些由 content-wrapper 處理 */
+        }
+        /* 調整內容與中心線的距離，這裡使用 margin */
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: auto; /* 將內容塊推向其父級 (50% 寬度) 的右側 */
+            margin-right: 30px; /* 控制內容塊與中心線的距離 */
+        }
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-right: auto; /* 將內容塊推向其父級 (50% 寬度) 的左側 */
+            margin-left: 30px; /* 控制內容塊與中心線的距離 */
         }
 
-        .timeline-card-left .timeline-content-wrapper {
-            margin-right: 20px;
-        }
-
-        .timeline-card-right .timeline-content-wrapper {
-            margin-left: 20px;
-        }
-
-        /* 內容卡片上的小箭頭 */
-        .timeline-content-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 25px; /* 箭頭與 header 對齊 */
-            width: 0;
-            height: 0;
-            border-style: solid;
-            transform: translateY(-50%);
-            z-index: 1;
-        }
-
-        .timeline-card-left .timeline-content-wrapper::after {
-            right: -10px;
-            border-width: 10px 0 10px 10px;
-            border-color: transparent transparent transparent #ffffff;
-        }
-
-        .timeline-card-right .timeline-content-wrapper::after {
-            left: -10px;
-            border-width: 10px 10px 10px 0;
-            border-color: transparent #ffffff transparent transparent;
-        }
-
-        /* 互動式展開/收合樣式 */
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            padding-bottom: 5px; /* 與 detail 內容的間距 */
-            border-bottom: 1px solid transparent; /* 預留空間，展開時變色 */
-            transition: border-bottom-color 0.3s ease;
-        }
-
-        .timeline-card-interactive.is-active .timeline-header {
-             border-bottom-color: #eee; /* 展開時底部有條線 */
-             margin-bottom: 10px; /* 展開時，header 和 detail 之間的間距 */
-        }
-
-
-        .timeline-header h4 {
-            font-size: 1.4em;
-            color: #333;
-            margin: 0; /* 重置 h4 的 margin */
-            flex-grow: 1;
-        }
-
-        .toggle-icon {
+        .timeline-content h4 {
             font-size: 1.5em;
-            font-weight: bold;
-            color: #5a7d9b;
-            margin-left: 10px;
-            transition: transform 0.3s ease;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 10px;
         }
-
-        .timeline-card-interactive.is-active .toggle-icon {
-            transform: rotate(45deg); /* 將加號變成叉號 */
-        }
-
-        .timeline-detail {
-            max-height: 0; /* 預設收合 */
-            overflow: hidden;
-            transition: max-height 0.4s ease-out, opacity 0.4s ease-out; /* 平滑過渡 */
-            opacity: 0; /* 初始透明 */
-            padding-top: 0; /* 初始無內邊距 */
-        }
-
-        .timeline-card-interactive.is-active .timeline-detail {
-            max-height: 200px; /* 足夠大的值，確保內容完整顯示 */
-            opacity: 1; /* 展開時顯示 */
-            padding-top: 5px; /* 展開後內邊距 */
-        }
-
-        .timeline-detail p {
-            font-size: 0.9em;
+        .timeline-content p {
+            font-size: 0.95em;
             color: #666;
-            line-height: 1.6;
-            margin-bottom: 0; /* detail 內部段落的 margin */
         }
-        /* ***** 「我們的旅程時間軸」互動式新設計 CSS 部分結束 ***** */
 
-
-        /* Team Section (團隊區塊) - 保持不變 */
+        /* Team Section (團隊區塊) */
         .team-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 30px;
-            margin-top: 40px;
+            margin-top: 0; /* 由 content-wrapper padding-top 控制 */
+            margin-bottom: 20px; /* 網格底部間距 */
         }
         .team-member {
             background-color: #ffffff;
@@ -697,16 +565,17 @@
             font-size: 0.9em;
             color: #666;
             line-height: 1.5;
-            min-height: 50px;
+            min-height: auto; /* 移除固定最小高度 */
         }
 
-        /* Contact Info (聯絡資訊) - 保持不變 */
+        /* Contact Info (聯絡資訊) */
         .contact-info {
             background-color: #fcfcfc;
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             border: 1px solid #eeeeee;
+            margin-top: 20px; /* 距離上方 team-grid 的間距 */
         }
         .contact-info p {
             margin-bottom: 10px;
@@ -715,14 +584,15 @@
             margin-bottom: 0;
         }
 
-        /* 滾動動畫通用樣式 - 保持不變，但請注意 JS 中 `fadeInSections` 的選擇器已更新 */
-        .fade-in, .fade-in-section {
+        /* 滾動動畫通用樣式 (現在由 content-wrapper 控制顯示) */
+        /* .fade-in, .fade-in-section classes are effectively replaced by .content-wrapper.is-revealed */
+        .fade-in { /* Keep for hero section elements if needed */
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 1s ease-out, transform 1s ease-out;
         }
 
-        .fade-in.is-visible, .fade-in-section.is-visible {
+        .fade-in.is-visible {
             opacity: 1;
             transform: translateY(0);
         }
@@ -731,7 +601,7 @@
             transition-delay: 0.5s;
         }
 
-        /* 返回頂部按鈕 - 保持不變 */
+        /* 返回頂部按鈕 */
         #backToTopBtn {
             display: none;
             position: fixed;
@@ -790,53 +660,37 @@
             }
             .about-content {
                 padding: 0 15px 40px;
+                max-width: 100%; /* 在小螢幕上確保內容滿寬度 */
+            }
+            .section-trigger {
+                font-size: 1.8em; /* 調整小螢幕下標題字體 */
+                margin-top: 40px; /* 調整小螢幕下標題間距 */
+            }
+            .content-wrapper.is-revealed {
+                padding-top: 20px; /* 小螢幕下內容頂部間距可以小一點 */
             }
             .values-grid {
                 grid-template-columns: 1fr;
             }
-
-            /* ***** 這裡開始是「我們的旅程時間軸」新設計響應式 CSS 部分 ***** */
-            .timeline-container-interactive::before {
-                left: 20px;
-                transform: translateX(0);
+            .timeline-container::after {
+                left: 20px; /* 時間軸線靠左 */
             }
-
-            .timeline-card-interactive {
-                width: 100%;
-                padding: 0 10px;
-                margin-bottom: 30px;
-                justify-content: flex-start !important;
-                transform: translateX(0) !important;
+            .timeline-item {
+                width: 100%; /* 時間軸項目佔滿寬度 */
+                padding: 10px 0; /* 繼續保持無左右 padding */
+                left: 0 !important; /* 強制靠左 */
+                text-align: left !important; /* 強制左對齊 */
             }
-
-            .timeline-card-left,
-            .timeline-card-right {
-                padding-right: 10px;
-                padding-left: 55px; /* 為左側的點和線留出空間 */
-            }
-
-            .timeline-dot-interactive {
-                left: 12px;
-                transform: translateX(0) !important;
-            }
-            .timeline-card-interactive:hover .timeline-dot-interactive {
-                transform: translateX(0) scale(1.1) !important;
-            }
-
-            .timeline-content-wrapper {
-                max-width: none;
-                margin-left: 15px;
-                margin-right: 0;
-            }
-
-            .timeline-content-wrapper::after {
-                left: -10px;
+            .timeline-item:nth-child(odd) .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: 12px; /* 點靠左對齊 */
                 right: auto;
-                border-width: 10px 10px 10px 0;
-                border-color: transparent #ffffff transparent transparent;
             }
-            /* ***** 「我們的旅程時間軸」新設計響應式 CSS 部分結束 ***** */
-
+            .timeline-item:nth-child(odd) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                margin-left: 45px; /* 統一靠左，與時間軸線距離 */
+                margin-right: 0; /* 移除右側 margin */
+            }
             .team-grid {
                 grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
                 gap: 20px;
@@ -863,6 +717,9 @@
             }
             .value-item h4 {
                 font-size: 1.2em;
+            }
+            .section-trigger {
+                font-size: 1.5em;
             }
         }
     </style>

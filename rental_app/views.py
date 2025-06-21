@@ -3,49 +3,66 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.db import transaction
-from django.conf import settings # 導入 settings 模組來讀取 Email 配置
-from django.core.mail import send_mail, EmailMultiAlternatives # 導入發送郵件的函數，包括多種內容類型
+from django.conf import settings
+from django.core.mail import send_mail
 
-from .models import Camera, Rental
+from .models import Item, Rental
 from .forms import RentalForm
 
-def camera_list(request):
+# 調整商品列表視圖，現在可以根據類別過濾
+def item_list(request, category=None):
     """
-    顯示所有相機的列表。
+    顯示所有或特定類別商品的列表。
     """
-    cameras = Camera.objects.all()
-    return render(request, 'rental_app/camera_list.html', {'cameras': cameras})
+    if category:
+        items = Item.objects.filter(category=category)
+        page_title = "所有商品" # 預設標題
 
-def camera_detail(request, pk):
-    """
-    顯示單個相機的詳細資訊及租賃表單。
-    """
-    camera = get_object_or_404(Camera, pk=pk)
-    form = RentalForm() # 顯示空白租賃表單
-    return render(request, 'rental_app/camera_detail.html', {'camera': camera, 'form': form})
+        # 修正這裡的邏輯：從 CATEGORY_CHOICES 列表中查找對應的中文名稱
+        for choice_value, choice_name in Item.CATEGORY_CHOICES:
+            if choice_value == category:
+                page_title = choice_name
+                break
+        page_title = f"{page_title}列表" # 加上「列表」字樣
+    else:
+        items = Item.objects.all()
+        page_title = "所有商品" # 如果沒有指定類別，則顯示「所有商品」
 
-def rent_camera(request, pk):
+    return render(request, 'rental_app/item_list.html', {'items': items, 'page_title': page_title})
+
+# 詳情頁面現在處理通用的 Item
+def item_detail(request, pk):
     """
-    處理相機租賃請求，並在成功後發送 Email 通知管理員和使用者。
+    顯示單個商品的詳細資訊及租賃表單。
     """
-    camera = get_object_or_404(Camera, pk=pk)
+    item = get_object_or_404(Item, pk=pk)
+    form = RentalForm()
+    return render(request, 'rental_app/item_detail.html', {'item': item, 'form': form})
+
+# 租賃處理頁面現在處理通用的 Item
+def rent_item(request, pk):
+    """
+    處理商品租賃請求，並在成功後發送 Email 通知管理員和使用者。
+    """
+    item = get_object_or_404(Item, pk=pk)
     if request.method == 'POST':
-        form = RentalForm(request.POST)
+        # 修正：在初始化 RentalForm 時，預先將 item 關聯到 Rental 實例
+        # 這樣表單的 clean 方法在驗證時就能正確訪問 item
+        form = RentalForm(request.POST, instance=Rental(item=item))
         if form.is_valid():
-            with transaction.atomic(): # 確保資料一致性
-                rental = form.save(commit=False)
-                rental.camera = camera
-                rental.status = 'pending' # 預設為待確認
-                rental.save()
+            with transaction.atomic():
+                # 因為 item 已經通過 instance 傳遞，save() 會自動關聯 item
+                rental = form.save() # 直接保存，不再需要 commit=False 和手動賦值
 
                 # --- 發送 Email 通知管理員 ---
-                admin_subject = f"新相機租賃請求：{camera.name}"
+                admin_subject = f"新商品租賃請求：{item.name} ({item.get_category_display()})"
                 admin_message = (
                     f"您好，管理員：\n\n"
-                    f"有一筆新的相機租賃請求已提交：\n\n"
-                    f"相機名稱: {camera.name}\n"
+                    f"有一筆新的商品租賃請求已提交：\n\n"
+                    f"商品名稱: {item.name}\n"
+                    f"商品類別: {item.get_category_display()}\n"
                     f"租賃者: {rental.user_name}\n"
-                    f"電子郵件: {rental.email}\n" # 包含使用者 Email
+                    f"電子郵件: {rental.email}\n"
                     f"起始日期: {rental.start_date.strftime('%Y-%m-%d')}\n"
                     f"結束日期: {rental.end_date.strftime('%Y-%m-%d')}\n"
                     f"總租金: NT${rental.total_price}\n"
@@ -58,12 +75,13 @@ def rent_camera(request, pk):
                 admin_recipient_list = [settings.ADMIN_EMAIL]
 
                 # --- 發送 Email 確認信給使用者 ---
-                user_subject = f"您的相機租賃請求已收到 - {camera.name}"
+                user_subject = f"您的商品租賃請求已收到 - {item.name}"
                 user_message = (
                     f"親愛的 {rental.user_name}：\n\n"
                     f"感謝您在相機租約中心提交的租賃請求！\n\n"
                     f"您的訂單詳情如下：\n"
-                    f"相機名稱: {camera.name}\n"
+                    f"商品名稱: {item.name}\n"
+                    f"商品類別: {item.get_category_display()}\n"
                     f"起始日期: {rental.start_date.strftime('%Y-%m-%d')}\n"
                     f"結束日期: {rental.end_date.strftime('%Y-%m-%d')}\n"
                     f"預計總租金: NT${rental.total_price}\n"
@@ -74,33 +92,27 @@ def rent_camera(request, pk):
                     f"相機租約中心 敬上"
                 )
                 user_from_email = settings.DEFAULT_FROM_EMAIL
-                user_recipient_list = [rental.email] # 發送到使用者提供的 Email
+                user_recipient_list = [rental.email]
 
                 try:
-                    # 發送給管理員
                     send_mail(admin_subject, admin_message, admin_from_email, admin_recipient_list, fail_silently=False)
                     print(f"成功發送租賃通知 Email 給管理員 ({settings.ADMIN_EMAIL})")
 
-                    # 發送給使用者
                     send_mail(user_subject, user_message, user_from_email, user_recipient_list, fail_silently=False)
                     print(f"成功發送租賃確認 Email 給使用者 ({rental.email})")
 
                 except Exception as e:
                     print(f"發送 Email 失敗：{e}")
-                    # 在生產環境中，這裡可以記錄錯誤或發送錯誤通知給開發者
 
-                return redirect('my_rentals') # 租賃成功後導向我的租賃頁面
+                return redirect('my_rentals')
         else:
-            # 如果表單驗證失敗，重新渲染詳情頁面並顯示錯誤
-            return render(request, 'rental_app/camera_detail.html', {'camera': camera, 'form': form})
-    return redirect('camera_detail', pk=pk) # 非 POST 請求導回詳情頁
+            return render(request, 'rental_app/item_detail.html', {'item': item, 'form': form})
+    return redirect('item_detail', pk=pk)
 
 def my_rentals(request):
     """
-    顯示用戶（此處為模擬用戶）的所有租賃訂單。
+    顯示所有租賃訂單。
     """
-    # 由於沒有實際用戶認證，這裡只顯示所有訂單作為示範
-    # 實際應用中會根據 request.user 過濾
     rentals = Rental.objects.all()
     return render(request, 'rental_app/my_rentals.html', {'rentals': rentals})
 

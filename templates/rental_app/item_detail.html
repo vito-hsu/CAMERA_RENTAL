@@ -1,24 +1,24 @@
-<!-- rental_app/templates/rental_app/camera_detail.html -->
+<!-- rental_app/templates/rental_app/item_detail.html -->
 {% extends 'base.html' %}
 
-{% block title %}{{ camera.name }} - 相機詳情{% endblock %}
+{% block title %}{{ item.name }} - 商品詳情{% endblock %}
 
 {% block content %}
-    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">{{ camera.name }}</h2>
+    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">{{ item.name }} ({{ item.get_category_display }})</h2>
 
-    <div class="camera-detail-layout">
-        <div class="camera-media">
-            {% if camera.image_url %}
-                <img src="{{ camera.image_url }}" alt="{{ camera.name }}" class="camera-detail-image" onerror="this.onerror=null;this.src='https://placehold.co/600x450/e0e0e0/333333?text=無圖片';">
+    <div class="item-detail-layout"> {# 類別名變為 item-detail-layout #}
+        <div class="item-media"> {# 類別名變為 item-media #}
+            {% if item.image_url %}
+                <img src="{{ item.image_url }}" alt="{{ item.name }}" class="item-detail-image" onerror="this.onerror=null;this.src='https://placehold.co/600x450/e0e0e0/333333?text=無圖片';">
             {% else %}
-                <img src="https://placehold.co/600x450/e0e0e0/333333?text=無圖片" alt="Placeholder Image" class="camera-detail-image">
+                <img src="https://placehold.co/600x450/e0e0e0/333333?text=無圖片" alt="Placeholder Image" class="item-detail-image">
             {% endif %}
         </div>
-        <div class="camera-details-info">
-            <p class="detail-description">{{ camera.description|default:"這是一台優質相機，適合多種攝影需求。了解更多相機特性與租賃資訊。" }}</p>
-            <p class="detail-price"><strong>每日租金:</strong> <span class="amount">NT${{ camera.price_per_day }}</span></p>
+        <div class="item-details-info"> {# 類別名變為 item-details-info #}
+            <p class="detail-description">{{ item.description|default:"這是一個優質品項，適合多種用途。了解更多特性與租賃資訊。" }}</p>
+            <p class="detail-price"><strong>每日租金:</strong> <span class="amount">NT${{ item.price_per_day }}</span></p>
             <p class="detail-availability"><strong>狀態:</strong>
-                {% if camera.is_available %}
+                {% if item.is_available %}
                     <span class="available">✅ 可用</span>
                 {% else %}
                     <span class="unavailable">❌ 不可用</span>
@@ -26,7 +26,7 @@
             </p>
 
             <h3 style="color: #333333; margin-top: 40px; margin-bottom: 20px; font-size: 1.8em; font-weight: 600;">預訂租賃</h3>
-            <form method="post" action="{% url 'rent_camera' camera.pk %}" class="rental-form">
+            <form method="post" action="{% url 'rent_item' item.pk %}" class="rental-form"> {# 變更 URL name #}
                 {% csrf_token %}
                 <div class="form-group">
                     {{ form.user_name.label_tag }}
@@ -36,7 +36,7 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{ form.email.label_tag }} {# 新增 Email 欄位的渲染 #}
+                    {{ form.email.label_tag }}
                     {{ form.email }}
                     {% if form.email.errors %}
                         <div class="form-errors">{% for error in form.email.errors %}{{ error }}{% endfor %}</div>
@@ -61,60 +61,61 @@
                         {% for error in form.non_field_errors %}{{ error }}{% endfor %}
                     </div>
                 {% endif %}
-                <button type="submit" class="btn btn-primary" {% if not camera.is_available %}disabled{% endif %}>
-                    {% if camera.is_available %}立即租賃{% else %}目前不可租賃{% endif %}
+                <button type="submit" class="btn btn-primary" {% if not item.is_available %}disabled{% endif %}> {# 變數名變為 item #}
+                    {% if item.is_available %}立即租賃{% else %}目前不可租賃{% endif %} {# 變數名變為 item #}
                 </button>
             </form>
             <div style="margin-top: 30px; text-align: center;">
-                <a href="{% url 'camera_list' %}" class="btn btn-link">返回相機列表</a>
+                <a href="{% url 'item_list' %}" class="btn btn-link">返回商品列表</a> {# 變更 URL name #}
             </div>
         </div>
     </div>
 
     <style>
-        .camera-detail-layout {
+        /* 樣式名稱也從 camera- 變更為 item- */
+        .item-detail-layout {
             display: flex;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
-            gap: 40px; /* 增加間距 */
+            flex-wrap: wrap;
+            gap: 40px;
             margin-top: 20px;
-            align-items: flex-start; /* 頂部對齊 */
+            align-items: flex-start;
         }
-        .camera-media {
-            flex: 2; /* Takes 2 parts of available space */
-            min-width: 350px; /* Minimum width for the image section */
+        .item-media {
+            flex: 2;
+            min-width: 350px;
             text-align: center;
         }
-        .camera-detail-image {
+        .item-detail-image {
             width: 100%;
-            max-width: 600px; /* Limit max image width */
+            max-width: 600px;
             height: auto;
-            border-radius: 8px; /* 較小的圓角 */
-            box-shadow: 0 6px 20px rgba(0,0,0,0.1); /* 柔和的陰影 */
-            border: 1px solid #eeeeee; /* 輕微的邊框 */
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            border: 1px solid #eeeeee;
         }
-        .camera-details-info {
-            flex: 1; /* Takes 1 part of available space */
-            min-width: 300px; /* Minimum width for the info/form section */
+        .item-details-info {
+            flex: 1;
+            min-width: 300px;
         }
         .detail-description {
             font-size: 1.05em;
             line-height: 1.7;
             color: #555;
-            margin-bottom: 25px; /* 增加間距 */
+            margin-bottom: 25px;
         }
         .detail-price, .detail-availability {
-            font-size: 1.15em; /* 字體稍大 */
-            margin-bottom: 15px; /* 增加間距 */
+            font-size: 1.15em;
+            margin-bottom: 15px;
             color: #333;
         }
         .detail-price strong, .detail-availability strong {
-            color: #222; /* 更深的強調色 */
+            color: #222;
             font-weight: 600;
         }
         .detail-price .amount {
             font-size: 1.3em;
             font-weight: 700;
-            color: #5a7d9b; /* 藍灰色強調色 */
+            color: #5a7d9b;
             margin-left: 5px;
         }
         .availability .available {
@@ -126,12 +127,12 @@
             font-weight: bold;
         }
         .rental-form {
-            background-color: #fcfcfc; /* 更淺的背景 */
-            padding: 30px; /* 增加內邊距 */
-            border-radius: 10px; /* 更大的圓角 */
-            border: 1px solid #e0e0e0; /* 淺邊框 */
-            margin-top: 30px; /* 增加間距 */
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* 輕微陰影 */
+            background-color: #fcfcfc;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            margin-top: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         .btn-primary[disabled] {
             opacity: 0.6;
@@ -142,16 +143,15 @@
             transform: none;
         }
 
-
         /* 響應式調整 */
         @media (max-width: 768px) {
-            .camera-detail-layout {
-                flex-direction: column; /* Stack elements vertically */
-                align-items: center; /* Center items when stacked */
+            .item-detail-layout {
+                flex-direction: column;
+                align-items: center;
                 gap: 30px;
             }
-            .camera-media, .camera-details-info {
-                width: 100%; /* Take full width */
+            .item-media, .item-details-info {
+                width: 100%;
                 min-width: unset;
             }
         }

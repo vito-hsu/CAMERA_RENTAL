@@ -9,108 +9,175 @@
     <style>
         /* 全局字體和背景 */
         body {
-            font-family: 'Inter', Arial, sans-serif; /* 使用 Inter 字體，確保視覺一致性 */
+            font-family: 'Inter', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f8f8f8; /* 更淺的背景色，接近純白，提供開放感 */
-            color: #333; /* 主要文字顏色 */
-            line-height: 1.6; /* 增加行高，提升可讀性 */
+            background-color: #f8f8f8;
+            color: #333;
+            line-height: 1.6;
         }
 
         /* 頁面頂部導航欄 */
         .header {
-            background-color: #222222; /* 更深的灰黑色，提供穩重感 */
-            color: white; /* 白色文字與深色背景形成良好對比 */
-            padding: 20px 30px; /* 增加上下內邊距，提升空間感 */
+            background-color: #222222;
+            color: white;
+            padding: 20px 30px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 更微妙的陰影，增加質感 */
-            /* 移除底部的圓角，保持更簡潔的線條 */
-            border-bottom: 1px solid rgba(255,255,255,0.1); /* 輕微的分隔線 */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         .header h1 {
             margin: 0;
-            font-size: 2.5em; /* 標題字體更大，更顯眼 */
-            letter-spacing: 1.5px; /* 增加字距，提升美感 */
-            font-weight: 600; /* 更粗的字體 */
+            font-size: 2.5em;
+            letter-spacing: 1.5px;
+            font-weight: 600;
         }
         .header nav {
-            margin-top: 20px; /* 導航連結與標題間距 */
+            margin-top: 20px;
+        }
+        .header nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* 允許換行 */
+        }
+        .header nav li {
+            position: relative; /* 為下拉菜單定位 */
+            margin: 0 15px; /* 調整為更緊湊的間距 */
         }
         .header nav a {
             color: white;
             text-decoration: none;
-            margin: 0 25px; /* 增加連結間距 */
-            font-weight: 500; /* 字體粗細適中 */
-            font-size: 1.1em; /* 導航連結字體稍大 */
-            transition: color 0.3s ease, border-bottom 0.3s ease; /* 平滑過渡效果 */
-            padding-bottom: 5px; /* 為底部指示線留空間 */
-            border-bottom: 2px solid transparent; /* 預設透明邊框 */
+            font-weight: 500;
+            font-size: 1.1em;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+            padding-bottom: 5px;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap; /* 防止連結文字換行 */
+            display: block; /* 讓整個區域可點擊 */
         }
         .header nav a:hover {
-            color: #ffffff; /* 懸停時保持白色，但強調下劃線 */
-            border-bottom: 2px solid #a8c1f0; /* 懸停時出現柔和的藍色下劃線 */
+            color: #ffffff;
+            border-bottom: 2px solid #a8c1f0;
         }
+
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block; /* Make the dropdown container inline-block */
+        }
+
+        .dropdown-content {
+            display: none; /* Hide the dropdown content by default */
+            position: absolute;
+            background-color: #333; /* Darker background for dropdown */
+            min-width: fit-content; /* 讓寬度適應內容 */
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+
+            /* Flexbox for horizontal layout */
+            flex-direction: row; /* 水平排列 */
+            white-space: nowrap; /* 防止項目換行 */
+
+            /* Positioning below the parent '商品' link */
+            top: 100%; /* Align top of dropdown with bottom of parent link */
+            left: 50%; /* Center the dropdown below the parent */
+            transform: translateX(-50%); /* Adjust for centering */
+            margin-top: 5px; /* Add a small gap between parent and dropdown */
+        }
+
+        /* JavaScript 會新增這個類別來顯示選單 */
+        .dropdown-content.show {
+            display: flex;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block; /* Still block within flex item */
+            text-align: center; /* Center text within horizontal items */
+            font-size: 1em;
+            border-bottom: none; /* Remove bottom border for horizontal layout */
+            border-right: 1px solid rgba(255,255,255,0.1); /* Add right border as separator */
+            transition: background-color 0.3s ease;
+            border-radius: 0;
+        }
+
+        .dropdown-content a:last-child {
+            border-right: none; /* No right border for the last item */
+        }
+
+        /* 移除 hover 顯示，改由 JS 控制
+        .dropdown:hover .dropdown-content {
+            display: flex;
+        }
+        */
+
 
         /* 主要內容容器 */
         .container {
-            max-width: 960px; /* 保持適中寬度，便於閱讀 */
-            margin: 40px auto; /* 增加上下外邊距，提供更多留白 */
-            padding: 40px; /* 增加內邊距 */
+            max-width: 960px;
+            margin: 40px auto;
+            padding: 40px;
             background-color: white;
-            border-radius: 8px; /* 較小的圓角，更為內斂 */
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08); /* 更明顯但柔和的陰影效果 */
-            box-sizing: border-box; /* 確保 padding 不會增加寬度 */
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            box-sizing: border-box;
         }
 
         /* 頁面底部版權信息 */
         .footer {
             text-align: center;
-            padding: 30px; /* 增加內邊距 */
-            margin-top: 50px; /* 增加上外邊距 */
-            background-color: #222222; /* 與頭部顏色一致 */
-            color: #cccccc; /* 淺灰色文字 */
+            padding: 30px;
+            margin-top: 50px;
+            background-color: #222222;
+            color: #cccccc;
             font-size: 0.9em;
-            /* 移除底部的圓角和陰影，與頭部設計呼應 */
         }
 
         /* 通用按鈕樣式 - 簡潔扁平化 */
         .btn {
             display: inline-block;
-            padding: 12px 28px; /* 增加按鈕大小 */
-            font-size: 1em; /* 字體適中 */
-            font-weight: 600; /* 更粗的字體 */
+            padding: 12px 28px;
+            font-size: 1em;
+            font-weight: 600;
             text-align: center;
             text-decoration: none;
-            border-radius: 6px; /* 更方正的圓角 */
+            border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: none; /* 移除預設陰影 */
-            border: 1px solid transparent; /* 預設透明邊框 */
-            line-height: 1; /* 確保文字居中 */
+            box-shadow: none;
+            border: 1px solid transparent;
+            line-height: 1;
         }
         .btn-primary {
-            background-color: #5a7d9b; /* 柔和的藍灰色，類似網站中較亮的按鈕 */
+            background-color: #5a7d9b;
             color: white;
         }
         .btn-primary:hover {
-            background-color: #4b6a8a; /* 懸停時顏色稍深 */
-            transform: translateY(-1px); /* 輕微上浮 */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 輕微陰影 */
+            background-color: #4b6a8a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .btn-secondary {
-            background-color: transparent; /* 透明背景 */
-            color: #5a7d9b; /* 藍灰色文字 */
-            border: 1px solid #5a7d9b; /* 藍灰色邊框 */
+            background-color: transparent;
+            color: #5a7d9b;
+            border: 1px solid #5a7d9b;
         }
         .btn-secondary:hover {
-            background-color: #5a7d9b; /* 懸停時填充顏色 */
-            color: white; /* 文字變白 */
+            background-color: #5a7d9b;
+            color: white;
             transform: translateY(-1px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .btn-link {
             background: none;
-            color: #007bff; /* 保持標準藍色，或根據網站風格調整 */
+            color: #007bff;
             border: none;
             padding: 0;
             text-decoration: underline;
@@ -118,42 +185,44 @@
         }
         .btn-link:hover {
             color: #0056b3;
-            text-decoration: none; /* 懸停時取消下劃線 */
+            text-decoration: none;
         }
 
         /* 表單樣式 (為整體美觀而優化) */
         .form-group {
-            margin-bottom: 25px; /* 增加表單組間距 */
+            margin-bottom: 25px;
         }
         .form-group label {
             display: block;
-            margin-bottom: 10px; /* 增加標籤與輸入框間距 */
-            font-weight: 500; /* 字體粗細適中 */
+            margin-bottom: 10px;
+            font-weight: 500;
             color: #555;
-            font-size: 1.05em; /* 標籤字體稍大 */
+            font-size: 1.05em;
         }
         .form-group input[type="text"],
         .form-group input[type="date"],
+        .form-group input[type="email"],
         .form-group textarea {
-            width: 100%; /* 輸入框佔滿可用寬度 */
-            padding: 14px; /* 增加輸入框內邊距，使其更舒適 */
-            border: 1px solid #dddddd; /* 淺灰色邊框 */
-            border-radius: 6px; /* 圓角輸入框 */
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #dddddd;
+            border-radius: 6px;
             font-size: 1em;
             box-sizing: border-box;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .form-group input[type="text"]:focus,
         .form-group input[type="date"]:focus,
+        .form-group input[type="email"]:focus,
         .form-group textarea:focus {
-            border-color: #5a7d9b; /* 聚焦時藍灰色邊框 */
-            box-shadow: 0 0 0 3px rgba(90,125,155,0.2); /* 聚焦時柔和陰影 */
-            outline: none; /* 移除瀏覽器預設外框 */
+            border-color: #5a7d9b;
+            box-shadow: 0 0 0 3px rgba(90,125,155,0.2);
+            outline: none;
         }
         .form-errors {
-            color: #dc3545; /* 錯誤訊息顏色 */
+            color: #dc3545;
             font-size: 0.9em;
-            margin-top: 8px; /* 錯誤訊息與輸入框間距 */
+            margin-top: 8px;
         }
 
         /* 響應式調整 */
@@ -165,9 +234,48 @@
             .header h1 {
                 font-size: 2em;
             }
+            .header nav {
+                margin-top: 15px;
+            }
+            .header nav ul {
+                flex-direction: column; /* 小螢幕下垂直堆疊導航 */
+                gap: 10px; /* 增加垂直間距 */
+            }
+            .header nav li {
+                margin: 0; /* 移除水平間距 */
+            }
             .header nav a {
-                margin: 0 15px;
                 font-size: 1em;
+                padding-bottom: 0;
+                border-bottom: none; /* 小螢幕下移除下劃線 */
+            }
+            .dropdown-content { /* 在小螢幕下，下拉選單變回垂直排列 */
+                position: static; /* 變成靜態定位 */
+                display: block; /* 讓內容垂直堆疊 */
+                box-shadow: none;
+                background-color: transparent;
+                min-width: unset;
+                transform: none;
+                top: unset;
+                left: unset; /* 移除左側定位 */
+                margin-left: 0; /* 移除左側外邊距 */
+                margin-top: 0; /* 移除頂部外邊距 */
+                border-radius: 0;
+                flex-direction: column; /* 強制垂直排列 */
+                white-space: normal; /* 允許文字換行 */
+            }
+            .dropdown-content a {
+                padding-left: 30px; /* 內縮，表示是子選項 */
+                border-bottom: 1px solid rgba(255,255,255,0.1); /* 重新添加底部邊框 */
+                border-right: none; /* 移除右側邊框 */
+                text-align: left; /* 文字靠左對齊 */
+            }
+            .dropdown-content a:last-child {
+                border-bottom: none; /* 最後一個子項無底部邊框 */
+            }
+            /* 在小螢幕下，hover 和 JS 的 show 類別都應該讓它 display: block; */
+            .dropdown-content.show {
+                display: block;
             }
         }
         @media (max-width: 480px) {
@@ -177,18 +285,6 @@
             .header h1 {
                 font-size: 1.6em;
             }
-            .header nav {
-                display: flex;
-                flex-direction: column;
-                gap: 12px; /* 增加連結間距 */
-                margin-top: 15px;
-            }
-            .header nav a {
-                padding-bottom: 0; /* 在小螢幕上移除底部指示線空間 */
-            }
-            .header nav a::after {
-                display: none; /* 在小螢幕上隱藏底部指示線 */
-            }
         }
     </style>
 </head>
@@ -196,10 +292,21 @@
     <div class="header">
         <h1>相機租約中心</h1>
         <nav>
-            <a href="{% url 'camera_list' %}">所有相機</a>
-            <a href="{% url 'my_rentals' %}">我的租賃</a>
-            <a href="{% url 'about_us' %}">關於我們</a>
-            <!-- 未來可添加登入/註冊連結 -->
+            <ul>
+                <li class="dropdown" id="productsDropdown">
+                    {# 將 "顯示商品" 改為 "商品" #}
+                    <a href="javascript:void(0);" class="dropbtn" id="productsDropbtn">商品</a> {# href 設為 javascript:void(0); 阻止默認跳轉 #}
+                    <div class="dropdown-content" id="productsDropdownContent">
+                        {# 新增 "所有商品" 選項 #}
+                        <a href="{% url 'item_list' %}">所有商品</a>
+                        <a href="{% url 'camera_list' %}">相機</a>
+                        <a href="{% url 'lens_list' %}">鏡頭</a>
+                        <a href="{% url 'other_list' %}">其他品項</a>
+                    </div>
+                </li>
+                <li><a href="{% url 'my_rentals' %}">所有租賃訂單</a></li>
+                <li><a href="{% url 'about_us' %}">關於我們</a></li>
+            </ul>
         </nav>
     </div>
 
@@ -210,8 +317,31 @@
     </div>
 
     <div class="footer">
-        &copy; 2025 CameraIsAllYouNeed. 版權所有.
+        &copy; 2025 相機租約中心. 版權所有.
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const productsDropdown = document.getElementById('productsDropdown');
+            const productsDropbtn = document.getElementById('productsDropbtn');
+            const productsDropdownContent = document.getElementById('productsDropdownContent');
+
+            // 點擊按鈕切換下拉選單的顯示/隱藏
+            productsDropbtn.addEventListener('click', function(event) {
+                event.stopPropagation(); // 阻止事件冒泡到 document，避免立即觸發隱藏
+                productsDropdownContent.classList.toggle('show');
+            });
+
+            // 點擊其他地方隱藏下拉選單
+            document.addEventListener('click', function(event) {
+                if (!productsDropdown.contains(event.target)) { // 如果點擊的目標不在下拉選單區域內
+                    if (productsDropdownContent.classList.contains('show')) {
+                        productsDropdownContent.classList.remove('show');
+                    }
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>

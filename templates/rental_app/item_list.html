@@ -1,55 +1,55 @@
-<!-- rental_app/templates/rental_app/camera_list.html -->
+<!-- rental_app/templates/rental_app/item_list.html -->
 {% extends 'base.html' %}
 
-{% block title %}所有相機{% endblock %}
+{% block title %}{{ page_title }}{% endblock %} {# 標題變為動態的 page_title #}
 
 {% block content %}
-    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">可租賃相機</h2>
-    <div class="camera-list-grid">
-        {% for camera in cameras %}
-            <div class="camera-card">
-                {% if camera.image_url %}
-                    <img src="{{ camera.image_url }}" alt="{{ camera.name }}" class="camera-image" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e0e0e0/333333?text=無圖片';">
+    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">{{ page_title }}</h2>
+    <div class="item-list-grid"> {# 類別名變為 item-list-grid #}
+        {% for item in items %} {# 變數名變為 item #}
+            <div class="item-card"> {# 類別名變為 item-card #}
+                {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="item-image" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e0e0e0/333333?text=無圖片';">
                 {% else %}
-                    <img src="https://placehold.co/400x300/e0e0e0/333333?text=無圖片" alt="Placeholder Image" class="camera-image">
+                    <img src="https://placehold.co/400x300/e0e0e0/333333?text=無圖片" alt="Placeholder Image" class="item-image">
                 {% endif %}
-                <div class="camera-info">
-                    <h3>{{ camera.name }}</h3>
-                    <p class="description">{{ camera.description|default:"無描述" }}</p>
-                    <p class="price">每日租金: NT$<span class="amount">{{ camera.price_per_day }}</span></p>
+                <div class="item-info"> {# 類別名變為 item-info #}
+                    <h3>{{ item.name }}</h3>
+                    <p class="description">{{ item.description|default:"無描述" }}</p>
+                    <p class="price">每日租金: NT$<span class="amount">{{ item.price_per_day }}</span></p>
                     <p class="availability">狀態:
-                        {% if camera.is_available %}
+                        {% if item.is_available %} {# 變數名變為 item #}
                             <span class="available">✅ 可用</span>
                         {% else %}
                             <span class="unavailable">❌ 不可用</span>
                         {% endif %}
                     </p>
-                    {# 根據相機可用性條件性顯示按鈕 #}
-                    {% if camera.is_available %}
-                        <a href="{% url 'camera_detail' camera.pk %}" class="btn btn-secondary view-detail-btn">查看詳情</a>
+                    {# 根據商品可用性條件性顯示按鈕 #}
+                    {% if item.is_available %} {# 變數名變為 item #}
+                        <a href="{% url 'item_detail' item.pk %}" class="btn btn-secondary view-detail-btn">查看詳情</a> {# 變更 URL name #}
                     {% else %}
-                        <span class="btn btn-disabled view-detail-btn">已預訂</span> {# 不可點擊的按鈕樣式 #}
+                        <span class="btn btn-disabled view-detail-btn">已預訂</span>
                     {% endif %}
                 </div>
             </div>
         {% empty %}
-            <p style="text-align: center; grid-column: 1 / -1; color: #777; margin-top: 50px; font-size: 1.1em;">目前沒有可租賃的相機。</p>
+            <p style="text-align: center; grid-column: 1 / -1; color: #777; margin-top: 50px; font-size: 1.1em;">目前沒有可租賃的品項。</p>
         {% endfor %}
     </div>
 
     <div style="text-align: center; margin-top: 50px;">
-        <a href="{% url 'my_rentals' %}" class="btn btn-secondary">查看我的租賃</a>
+        <a href="{% url 'my_rentals' %}" class="btn btn-secondary">查看所有租賃訂單</a>
     </div>
 
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
     <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var elem = document.querySelector('.camera-list-grid');
+            var elem = document.querySelector('.item-list-grid'); {# 類別名變為 item-list-grid #}
             if (elem) {
                 var msnry = new Masonry(elem, {
-                    itemSelector: '.camera-card',
-                    columnWidth: '.camera-card',
+                    itemSelector: '.item-card', {# 類別名變為 item-card #}
+                    columnWidth: '.item-card', {# 類別名變為 item-card #}
                     gutter: 20,
                     percentPosition: true,
                     resize: true
@@ -63,11 +63,12 @@
     </script>
 
     <style>
-        .camera-list-grid {
+        /* 樣式名稱也從 camera- 變更為 item- */
+        .item-list-grid {
             margin: 0 auto;
             position: relative;
         }
-        .camera-card {
+        .item-card {
             width: calc(33.333% - 20px);
             margin-bottom: 20px;
 
@@ -80,47 +81,47 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border: 1px solid #eeeeee;
         }
-        .camera-card:hover {
+        .item-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.12);
         }
-        .camera-image {
+        .item-image {
             width: 100%;
             height: auto;
             max-height: 250px;
             object-fit: cover;
             border-bottom: 1px solid #eeeeee;
         }
-        .camera-info {
+        .item-info {
             padding: 20px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
         }
-        .camera-info h3 {
+        .item-info h3 {
             margin-top: 0;
             color: #333333;
             font-size: 1.5em;
             margin-bottom: 10px;
             font-weight: 600;
         }
-        .camera-info .description {
+        .item-info .description {
             font-size: 0.95em;
             color: #666;
             margin-bottom: 15px;
             flex-grow: 1;
         }
-        .camera-info .price {
+        .item-info .price {
             font-weight: bold;
             color: #4A90E2;
             font-size: 1.1em;
             margin-bottom: 10px;
         }
-        .camera-info .price .amount {
+        .item-info .price .amount {
             font-size: 1.2em;
             font-weight: 700;
         }
-        .camera-info .availability {
+        .item-info .availability {
             font-size: 0.9em;
             margin-bottom: 20px;
             color: #777;
@@ -138,29 +139,27 @@
             margin-top: auto;
             box-sizing: border-box;
         }
-
-        /* 新增：禁用按鈕的樣式 */
         .btn-disabled {
-            background-color: #cccccc; /* 灰色背景 */
-            color: #666666; /* 灰色文字 */
-            cursor: not-allowed; /* 禁用游標 */
-            box-shadow: none; /* 移除陰影 */
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            box-shadow: none;
             opacity: 0.8;
-            pointer-events: none; /* 徹底禁用點擊事件 */
-            text-decoration: none; /* 移除可能的下劃線 */
+            pointer-events: none;
+            text-decoration: none;
         }
 
         /* 響應式調整 */
         @media (max-width: 992px) {
-            .camera-card {
+            .item-card {
                 width: calc(50% - 20px);
             }
         }
         @media (max-width: 600px) {
-            .camera-list-grid {
+            .item-list-grid {
                 margin: 0 15px;
             }
-            .camera-card {
+            .item-card {
                 width: calc(100% - 0px);
                 margin: 0 auto 20px auto;
             }

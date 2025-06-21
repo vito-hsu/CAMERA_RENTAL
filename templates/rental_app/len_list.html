@@ -1,0 +1,169 @@
+<!-- rental_app/templates/rental_app/lens_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}鏡頭列表{% endblock %}
+
+{% block content %}
+    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">鏡頭列表</h2>
+    <div class="item-list-grid">
+        {# 由於 item_list 視圖會根據 category 過濾，這裡只需迭代 items #}
+        {% for item in items %}
+            <div class="item-card">
+                {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="item-image" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e0e0e0/333333?text=無圖片';">
+                {% else %}
+                    <img src="https://placehold.co/400x300/e0e0e0/333333?text=無圖片" alt="Placeholder Image" class="item-image">
+                {% endif %}
+                <div class="item-info">
+                    <h3>{{ item.name }}</h3>
+                    <p class="description">{{ item.description|default:"無描述" }}</p>
+                    <p class="price">每日租金: NT$<span class="amount">{{ item.price_per_day }}</span></p>
+                    <p class="availability">狀態:
+                        {% if item.is_available %}
+                            <span class="available">✅ 可用</span>
+                        {% else %}
+                            <span class="unavailable">❌ 不可用</span>
+                        {% endif %}
+                    </p>
+                    {% if item.is_available %}
+                        <a href="{% url 'item_detail' item.pk %}" class="btn btn-secondary view-detail-btn">查看詳情</a>
+                    {% else %}
+                        <span class="btn btn-disabled view-detail-btn">已預訂</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p style="text-align: center; grid-column: 1 / -1; color: #777; margin-top: 50px; font-size: 1.1em;">目前沒有可租賃的鏡頭。</p>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin-top: 50px;">
+        <a href="{% url 'my_rentals' %}" class="btn btn-secondary">查看所有租賃訂單</a>
+    </div>
+
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elem = document.querySelector('.item-list-grid');
+            if (elem) {
+                var msnry = new Masonry(elem, {
+                    itemSelector: '.item-card',
+                    columnWidth: '.item-card',
+                    gutter: 20,
+                    percentPosition: true,
+                    resize: true
+                });
+
+                imagesLoaded(elem).on('always', function() {
+                    msnry.layout();
+                });
+            }
+        });
+    </script>
+
+    <style>
+        /* 由於 item_list.html 已經定義了樣式，這裡可以共用。
+           如果需要鏡頭獨特的樣式，可以在這裡覆蓋。 */
+        .item-list-grid {
+            margin: 0 auto;
+            position: relative;
+        }
+        .item-card {
+            width: calc(33.333% - 20px);
+            margin-bottom: 20px;
+
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #eeeeee;
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        .item-image {
+            width: 100%;
+            height: auto;
+            max-height: 250px;
+            object-fit: cover;
+            border-bottom: 1px solid #eeeeee;
+        }
+        .item-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .item-info h3 {
+            margin-top: 0;
+            color: #333333;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .item-info .description {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        .item-info .price {
+            font-weight: bold;
+            color: #4A90E2;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        .item-info .price .amount {
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+        .item-info .availability {
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            color: #777;
+        }
+        .availability .available {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .availability .unavailable {
+            color: #F44336;
+            font-weight: bold;
+        }
+        .view-detail-btn {
+            width: 100%;
+            margin-top: auto;
+            box-sizing: border-box;
+        }
+        .btn-disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.8;
+            pointer-events: none;
+            text-decoration: none;
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 992px) {
+            .item-card {
+                width: calc(50% - 20px);
+            }
+        }
+        @media (max-width: 600px) {
+            .item-list-grid {
+                margin: 0 15px;
+            }
+            .item-card {
+                width: calc(100% - 0px);
+                margin: 0 auto 20px auto;
+            }
+        }
+    </style>
+{% endblock %}
