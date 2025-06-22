@@ -3,36 +3,48 @@
 {% block title %}聯絡我們{% endblock %}
 
 {% block content %}
-    <div class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10">
-                <h2 class="display-4 fw-bolder text-center mb-4 animate__animated animate__fadeInDown">聯絡我們</h2>
-                <p class="lead text-center text-muted mb-5 animate__animated animate__fadeInUp animate__delay-0-5s">
-                    我們隨時樂意為您服務！如果您有任何疑問、建議或需要協助，請透過以下方式聯絡我們。
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <!-- 標題 -->
+            <div class="text-center mb-4">
+                <h2 class="display-5 fw-bold animate__animated animate__fadeInDown">聯絡我們</h2>
+                <p class="lead text-muted mt-3 animate__animated animate__fadeInUp animate__delay-0-5s">
+                    我們樂意傾聽您的聲音。如果您有任何問題、建議或需要協助，請透過以下方式與我們聯繫。
                 </p>
-
-                <div class="card p-4 shadow-lg rounded-4 mb-5 animate__animated animate__fadeInUp animate__delay-1s">
-                    <div class="card-body text-center">
-                        <p class="fs-4 mb-3 text-dark">您可以透過電子郵件與我們取得聯繫：</p>
-                        <p class="fs-3 fw-bold text-primary mb-0 animate__animated animate__pulse animate__infinite animate__delay-1-5s">
-                            <i class="bi bi-envelope-fill me-2"></i>
-                            電子郵件: <a href="mailto:garraypierce@gmail.com" class="text-decoration-none text-primary-hover">garraypierce@gmail.com</a>
-                        </p>
-                        <small class="text-muted mt-2 d-block animate__animated animate__fadeInUp animate__delay-2s">點擊上方電子郵件即可傳送郵件</small>
-                    </div>
-                </div>
-
-                <h3 class="fw-bold text-center mb-4 animate__animated animate__fadeInDown animate__delay-2-2s">常見問題</h3>
-                <p class="text-secondary text-center mb-5 animate__animated animate__fadeInUp animate__delay-2-4s">
-                    在聯絡我們之前，您可以先瀏覽我們的「關於我們」頁面，也許能找到您需要的資訊。
-                </p>
-                <div class="text-center animate__animated animate__fadeInUp animate__delay-2-6s">
-                     <a href="{% url 'about_us' %}" class="btn custom-btn custom-btn-outline btn-lg rounded-pill shadow-sm">
-                        <i class="bi bi-info-circle me-2"></i>前往關於我們
-                    </a>
-                </div>
-
             </div>
+
+            <!-- 聯絡資訊卡片 -->
+            <div class="card shadow-lg rounded-4 border-0 animate__animated animate__fadeInUp animate__delay-1s">
+                <div class="card-body text-center py-5 px-4">
+                    <div class="mb-4">
+                        <i class="bi bi-envelope-paper-fill text-primary display-3 animate__animated animate__pulse animate__infinite animate__delay-1-5s"></i>
+                    </div>
+                    <h5 class="fw-bold fs-4 text-dark mb-3">電子郵件聯絡方式</h5>
+                    <p class="fs-5">
+                        <a href="mailto:garraypierce@gmail.com" class="text-decoration-none text-primary fw-semibold">
+                            garraypierce@gmail.com
+                        </a>
+                    </p>
+                    <p class="text-muted small">點擊上方電子郵件地址即可直接發送郵件</p>
+                </div>
+            </div>
+
+            <!-- 常見問題 -->
+            <div class="text-center mt-5">
+                <h4 class="fw-bold mb-3 animate__animated animate__fadeInDown animate__delay-2s">
+                    常見問題
+                </h4>
+                <p class="text-muted animate__animated animate__fadeInUp animate__delay-2-2s">
+                    在聯絡我們之前，您可以先瀏覽我們的「關於我們」頁面，也許能找到所需資訊。
+                </p>
+                <a href="{% url 'about_us' %}" class="btn btn-outline-primary btn-lg rounded-pill mt-3 animate__animated animate__fadeInUp animate__delay-2-4s shadow-sm">
+                    <i class="bi bi-info-circle me-2"></i> 前往關於我們
+                </a>
+            </div>
+
         </div>
     </div>
+</div>
 {% endblock %}

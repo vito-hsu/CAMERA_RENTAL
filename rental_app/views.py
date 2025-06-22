@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.db import transaction
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import Q # <--- 新增這一行：導入 Q 物件用於複雜查詢
 
 from .models import Item, Rental
 from .forms import RentalForm
@@ -141,3 +142,28 @@ def contact_us_view(request):
     渲染聯絡我們頁面
     """
     return render(request, 'rental_app/contact_us.html')
+
+# <--- 從這裡開始新增商品搜尋視圖 --->
+from django.db.models import Q # 再次確認 Q 已經導入，確保它在函數上方
+
+def product_search_view(request):
+    """
+    處理商品關鍵字搜尋請求。
+    """
+    query = request.GET.get('q', '') # 取得搜尋關鍵字，如果沒有則預設為空字串
+
+    items = Item.objects.all() # 預設查詢所有商品
+
+    if query:
+        # 使用 Q 物件進行 OR 查詢，同時搜尋名稱 (name) 和描述 (description)
+        # __icontains 是不區分大小寫的包含查詢
+        items = items.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        ).distinct() # distinct() 避免重複結果，雖然在這個簡單查詢下通常不會有重複
+
+    context = {
+        'query': query,
+        'items': items,
+        'page_title': f"搜尋結果：'{query}'" if query else "所有商品", # 顯示搜尋關鍵字在標題
+    }
+    return render(request, 'rental_app/product_search_results.html', context)

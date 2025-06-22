@@ -273,11 +273,25 @@
                 padding-top: 1rem !important;
                 padding-bottom: 1rem !important;
             }
+            /* 小螢幕下搜尋框樣式 */
+            .navbar-nav + .d-flex { /* 讓搜尋框與導航連結之間有間距 */
+                margin-top: 1rem;
+            }
+            .navbar-nav + .d-flex .form-control {
+                width: 100%; /* 佔滿可用寬度 */
+                margin-right: 0 !important; /* 移除右邊距 */
+                margin-bottom: 0.5rem; /* 輸入框與按鈕間距 */
+            }
+            .navbar-nav + .d-flex .btn {
+                width: 100%; /* 按鈕佔滿可用寬度 */
+            }
         }
     </style>
+    {# 在這裡可以添加其他頁面特有的 CSS #}
+    {% block extra_css %}{% endblock %} {# 允許子模板添加額外的 CSS #}
 </head>
 <body>
-  {# 導航欄 #}
+    {# 導航欄 #}
     <nav class="navbar navbar-expand-lg custom-main-navbar py-3 shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="{% url 'item_list' %}">
@@ -321,6 +335,12 @@
                         </a>
                     </li>
                 </ul>
+                {# <--- 從這裡開始新增搜尋表單 ---> #}
+                <form class="d-flex ms-lg-3 my-2 my-lg-0" action="{% url 'product_search' %}" method="GET">
+                    <input class="form-control me-2" type="search" placeholder="搜尋商品..." aria-label="Search" name="q" value="{{ request.GET.q|default:'' }}">
+                    <button class="btn custom-btn custom-btn-outline" type="submit"><i class="bi bi-search"></i></button>
+                </form>
+                {# <--- 搜尋表單新增結束 ---> #}
             </div>
         </div>
     </nav>

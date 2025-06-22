@@ -23,4 +23,7 @@ urlpatterns = [
     path('about-us/', views.about_us, name='about_us'),
     # 聯繫我們
     path('contact/', views.contact_us_view, name='contact_us'),
+
+    # <--- 新增這一行：商品關鍵字搜尋頁面 --->
+    path('search/', views.product_search_view, name='product_search'),
 ]
