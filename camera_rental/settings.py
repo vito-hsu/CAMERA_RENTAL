@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config, Csv # Csv 用於解析逗號分隔的列表
+import dj_database_url # 用於從環境變數讀取資料庫連線資訊
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,9 +24,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY') # 從 .env 讀取
 
-DEBUG = True
+# DEBUG 模式設定 (重要！)
+# 部署到生產環境時，DEBUG 必須為 False！
+# 建議使用環境變數來控制 DEBUG 模式，預設為 True (用於本地開發)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+# 允許的主機 (重要！)
+# 在生產環境中，必須指定允許訪問您網站的域名或 IP 地址。
+# 您部署後的網站域名將會在這裡。
+# 例如：'your-app-name.render.com', 'your-custom-domain.com'
+# 使用 Csv 讓 ALLOWED_HOSTS 可以從 .env 讀取多個值，以逗號分隔
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 
 # Application definition
@@ -73,11 +82,12 @@ WSGI_APPLICATION = 'camera_rental.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# 資料庫配置 (重要！)
+# 在生產環境中，您幾乎不會使用 SQLite。PaaS 通常會提供 PostgreSQL 或 MySQL 資料庫。
+# 使用 dj_database_url 從環境變數讀取資料庫連線資訊。
+DATABASE_URL = config('DATABASE_URL', default='sqlite:///db.sqlite3') # 本地開發預設使用 SQLite
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
 }
 
 
