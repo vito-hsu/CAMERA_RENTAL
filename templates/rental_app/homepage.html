@@ -1,0 +1,505 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}首頁 - 專業攝影器材租賃{% endblock %}
+
+{% block content %}
+    {# 首頁英雄區 #}
+    {# 使用 hero_camera2.jpg 作為首頁的英雄區圖片 #}
+    {% with hero_image="images/hero/hero_camera2.jpg" hero_title="探索無限可能" hero_subtitle="您的專業攝影器材，觸手可及。" %}
+        <section class="hero-section animate__animated animate__fadeIn" data-hero-image="{% static hero_image %}">
+            <div class="hero-content">
+                <h1 class="hero-title animate__animated animate__fadeInDown animate__delay-0-5s">
+                    <i class="bi bi-camera-reels-fill me-3"></i>{{ hero_title }}
+                </h1>
+                <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-0-8s">
+                    {{ hero_subtitle }}
+                </p>
+                <div class="hero-buttons animate__animated animate__zoomIn animate__delay-1s">
+                    <a href="{% url 'camera_list' %}" class="btn custom-btn custom-btn-primary me-3">
+                        <i class="bi bi-camera me-2"></i>探索相機
+                    </a>
+                    <a href="{% url 'lens_list' %}" class="btn custom-btn custom-btn-secondary">
+                        <i class="bi bi-optical-audio me-2"></i>探索鏡頭
+                    </a>
+                </div>
+            </div>
+        </section>
+    {% endwith %}
+
+    {# 主要內容區塊 #}
+    <div class="container mt-5 pt-5">
+        {# 精緻的「推薦商品」標題 #}
+        <div class="text-center mb-5 pb-4 custom-header-section">
+            <h2 class="display-4 fw-bolder text-dark mb-2 animate__animated animate__fadeInDown">
+                熱門推薦器材
+            </h2>
+            <p class="lead text-muted fst-italic animate__animated animate__fadeInUp animate__delay-0-5s">
+                精選頂級攝影設備，助您輕鬆實現創意願景。
+            </p>
+            <div class="header-divider animate__animated animate__fadeInUp animate__delay-0-8s"></div>
+        </div>
+
+        {# 熱門商品列表 (與 item_list.html 的卡片相似) #}
+        <div class="row item-list-grid g-4 justify-content-center animate__animated animate__fadeInUp animate__delay-1s">
+            {% for item in items %}
+                <div class="col-12 col-md-4 col-lg-3 d-flex align-items-stretch">
+                    <div class="card item-card h-100 shadow-lg border-0 rounded-4 overflow-hidden position-relative">
+                        {% if item.image_url %}
+                            <div class="item-image-wrapper">
+                                <img src="{{ item.image_url }}" class="card-img-top object-fit-cover" alt="{{ item.name }}" loading="lazy" style="height: 250px;">
+                                <div class="image-overlay"></div>
+                            </div>
+                        {% else %}
+                            <div class="item-image-wrapper">
+                                <img src="{% static 'images/default_item.jpg' %}" class="card-img-top object-fit-cover" alt="Placeholder Image" loading="lazy" style="height: 250px;">
+                                <div class="image-overlay"></div>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column p-4">
+                            <h3 class="card-title text-dark fw-bold mb-2 fs-4 text-truncate" title="{{ item.name }}">{{ item.name }}</h3>
+                            <p class="card-text text-muted mb-3 flex-grow-1 fs-6 item-description-clamp">{{ item.description|default:"暫無描述。" }}</p>
+                            
+                            <p class="mb-2 fs-5 fw-bold text-primary">
+                                <i class="bi bi-currency-dollar me-1"></i> 每日租金: NT$<span class="amount">{{ item.price_per_day }}</span>
+                            </p>
+                            
+                            <p class="card-text mb-4 fs-6 text-muted">狀態:
+                                {% if item.is_available %}
+                                    <span class="badge bg-success available-pulse">✅ 可用</span>
+                                {% else %}
+                                    <span class="badge bg-danger unavailable-static">❌ 不可用</span>
+                                {% endif %}
+                            </p>
+                            
+                            <div class="mt-auto">
+                                {% if item.is_available %}
+                                    <a href="{% url 'item_detail' item.pk %}" class="btn custom-btn custom-btn-secondary w-100 btn-fancy-hover">
+                                        <i class="bi bi-info-circle me-2"></i>查看詳情
+                                    </a>
+                                {% else %}
+                                    <button type="button" class="btn btn-secondary w-100 disabled-button-style" disabled>
+                                        <i class="bi bi-calendar-check me-2"></i>已預訂
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 py-5 my-5 text-center empty-state-card animate__animated animate__fadeInUp">
+                    <div class="icon-wrapper mb-4 animate__animated animate__bounceIn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-camera-reels-fill text-info" viewBox="0 0 16 16">
+                            <path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                            <path d="M9 6h6a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/>
+                            <path d="M9 3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V3z"/>
+                            <path d="M9 0a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V0zM13 3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V3z"/>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="#dc3545" class="bi bi-x-circle-fill text-danger position-absolute top-0 start-50 translate-middle" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
+                        </svg>
+                    </div>
+                    <p class="fs-3 text-muted mb-3 fw-bold">目前沒有可租賃的攝影器材。</p>
+                    <p class="text-secondary fs-5 mb-4">我們正在積極更新商品庫，請稍後再來看看！</p>
+                    <a href="{% url 'about_us' %}" class="btn custom-btn custom-btn-primary btn-fancy-hover-small">
+                        <i class="bi bi-question-circle me-2"></i> 聯絡我們了解更多
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        {# Call to Action / Footer Button Section #}
+        <div class="text-center mt-5 pt-4 custom-footer-cta animate__animated animate__fadeInUp animate__delay-1-5s">
+            <p class="lead text-muted mb-4 fs-4">想要了解您的所有租賃訂單嗎？</p>
+            <a href="{% url 'my_rentals' %}" class="btn custom-btn custom-btn-primary btn-lg rounded-pill shadow-lg animate-cta-button">
+                <i class="bi bi-receipt me-2"></i>查看我的所有租賃訂單
+            </a>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elem = document.querySelector('.item-list-grid');
+            if (elem) {
+                var msnry = new Masonry(elem, {
+                    itemSelector: '.col-12', 
+                    columnWidth: '.col-lg-3', 
+                    gutter: 24, 
+                    percentPosition: true,
+                    resize: true
+                });
+
+                imagesLoaded(elem).on('always', function() {
+                    msnry.layout();
+                });
+            }
+        });
+    </script>
+    
+    {# 引入 Animate.css 以實現更多動畫效果 #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        /* CSS Variables for a Custom Palette (optional, but good practice for "fancy") */
+        :root {
+            --primary-accent: #5a7d9b; /* Your existing primary color */
+            --secondary-accent: #a8c1f0; /* Your existing secondary color */
+            --light-grey: #f8f9fa;
+            --medium-grey: #e9ecef;
+            --dark-grey-text: #343a40;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --card-border-light: #f0f0f0;
+            --card-shadow-light: rgba(0,0,0,0.08);
+            --card-shadow-hover: rgba(0,0,0,0.2);
+            --transition-ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* 針對英雄區的自定義 CSS - 現在動態背景圖片會在這裡生成 */
+        .hero-section {
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 8rem 0;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px; /* 首頁可以稍微高一點 */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); /* 增加一層半透明黑色蒙版，讓文字更清晰 */
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 3.8rem; /* 首頁標題更大 */
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem; /* 首頁副標題更大 */
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* 按鈕間距 */
+        }
+
+        /* 按鈕調整 */
+        .hero-section .custom-btn-primary,
+        .hero-section .custom-btn-secondary {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            padding: 0.9rem 2.5rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            border: none;
+            color: white; /* 確保文字顏色 */
+        }
+
+        .hero-section .custom-btn-primary {
+            background-image: linear-gradient(to right, var(--primary-accent) 0%, #4A90E2 100%); /* 加深 Primary */
+        }
+
+        .hero-section .custom-btn-secondary {
+            background-image: linear-gradient(to right, var(--secondary-accent) 0%, var(--primary-accent) 100%);
+        }
+
+        .hero-section .custom-btn-primary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+            background-image: linear-gradient(to right, #4A90E2 0%, var(--primary-accent) 100%);
+        }
+        .hero-section .custom-btn-secondary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+            background-image: linear-gradient(to right, var(--primary-accent) 0%, var(--secondary-accent) 100%);
+        }
+        .hero-section .custom-btn-primary:active,
+        .hero-section .custom-btn-secondary:active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        /* 手機響應式調整 */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 6rem 0;
+                min-height: 380px;
+            }
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            .hero-subtitle {
+                font-size: 1.4rem;
+            }
+            .hero-buttons {
+                flex-direction: column; /* 按鈕垂直堆疊 */
+                gap: 15px;
+            }
+            .hero-section .custom-btn-primary,
+            .hero-section .custom-btn-secondary {
+                padding: 0.7rem 2rem;
+                font-size: 1.1rem;
+                width: 80%; /* 按鈕寬度適應 */
+                margin: 0 auto; /* 居中 */
+            }
+        }
+
+        /* 以下是您原有 item_list.html 中的通用樣式，已整合到這裡 */
+
+        /* Fancy Header Enhancements */
+        .custom-header-section {
+            padding-bottom: 2.5rem;
+        }
+        .custom-header-section h2 {
+            font-family: 'Inter', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+        .custom-header-section .lead {
+            font-family: 'Inter', sans-serif;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .header-divider {
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+            margin: 1.5rem auto 0 auto;
+            border-radius: 2px;
+        }
+
+        /* Item Card Enhancements */
+        .item-card {
+            transition: transform 0.5s var(--transition-ease-out-quad), box-shadow 0.5s var(--transition-ease-out-quad), border-color 0.5s var(--transition-ease-out-quad);
+            border: 1px solid var(--card-border-light);
+            box-shadow: 0 6px 18px var(--card-shadow-light);
+            border-bottom: 4px solid transparent;
+        }
+        .item-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 20px 40px var(--card-shadow-hover);
+            border-color: var(--primary-accent);
+            border-bottom: 4px solid var(--primary-accent);
+        }
+
+        .item-image-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--medium-grey);
+        }
+
+        .item-image-wrapper img {
+            transition: transform 0.6s var(--transition-ease-out-quad), filter 0.6s var(--transition-ease-out-quad);
+        }
+
+        .item-card:hover .item-image-wrapper img {
+            transform: scale(1.1);
+            filter: brightness(0.85);
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.2) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .item-card:hover .image-overlay {
+            opacity: 1;
+        }
+
+        /* Description clamping for consistent card height */
+        .item-description-clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: 3.6em;
+            line-height: 1.2;
+        }
+
+        /* Availability Badges - More distinct Pulsating effect */
+        @keyframes pulse-animation {
+            0% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(40, 167, 69, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+
+        .available-pulse {
+            animation: pulse-animation 2s infinite cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-radius: 1rem;
+            padding: .4em .8em;
+            font-weight: 700;
+        }
+        
+        .unavailable-static {
+            border-radius: 1rem;
+            padding: .4em .8em;
+            font-weight: 700;
+            opacity: 0.8;
+        }
+
+        /* Empty State Styling - More central and visually appealing */
+        .empty-state-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 60px 30px;
+            max-width: 600px;
+            margin: 80px auto;
+            border: 1px solid #e0e0e0;
+            position: relative;
+            overflow: hidden;
+        }
+        .empty-state-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(248, 248, 248, 0.7) 25%, transparent 25%, transparent 75%, rgba(248, 248, 248, 0.7) 75%, rgba(248, 248, 248, 0.7)), linear-gradient(45deg, rgba(248, 248, 248, 0.7) 25%, transparent 25%, transparent 75%, rgba(248, 248, 248, 0.7) 75%, rgba(248, 248, 248, 0.7));
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            opacity: 0.5;
+            z-index: 0;
+        }
+        .empty-state-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-state-card .icon-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .empty-state-card .icon-wrapper svg.bi-x-circle-fill {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .empty-state-card .btn {
+            font-weight: 600;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .item-card:hover {
+                transform: translateY(-8px) scale(1.01);
+                box-shadow: 0 12px 25px rgba(0,0,0,0.18);
+            }
+        }
+        @media (max-width: 768px) {
+            .display-4 {
+                font-size: 2.5rem;
+            }
+            .lead {
+                font-size: 1.1rem;
+            }
+            .header-divider {
+                width: 60px;
+                margin-top: 1rem;
+            }
+            .custom-sort-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0.8rem 1rem !important;
+            }
+            .custom-sort-controls label {
+                margin-bottom: 0.5rem;
+            }
+            .custom-select-fancy {
+                width: 100%;
+            }
+            .item-card {
+                margin: 0 auto 1.5rem auto;
+            }
+            .item-description-clamp {
+                -webkit-line-clamp: 4;
+                min-height: 4.8em;
+            }
+            .empty-state-card {
+                padding: 40px 20px;
+                margin: 40px auto;
+            }
+            .empty-state-card .icon-wrapper svg {
+                width: 70px;
+                height: 70px;
+            }
+            .fs-3 {
+                font-size: 1.75rem !important;
+            }
+            .fs-5 {
+                font-size: 1rem !important;
+            }
+        }
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1rem;
+            }
+        }
+
+        /* 動態設定英雄區背景圖片的 CSS */
+        /* 這段 JavaScript 已經移動到 HTML body 結束前，但這裡保留註釋以提醒 */
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                // 從 Django 模板中的 with 標籤獲取 hero_image 變數
+                const heroImage = heroSection.dataset.heroImage; 
+                if (heroImage) {
+                    heroSection.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url("${heroImage}")`;
+                }
+            }
+        });
+    </script>
+{% endblock %}

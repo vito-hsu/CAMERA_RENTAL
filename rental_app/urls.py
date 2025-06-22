@@ -4,10 +4,13 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # 網站首頁顯示所有商品
-    path('', views.item_list, name='item_list'),
+    # 將根路徑指向 homepage 視圖 (首頁)
+    path('', views.homepage, name='homepage'), 
+    
+    # 新增一個 URL 模式，用於顯示所有商品 (使用 item_list 視圖，但不傳遞 category)
+    path('items/', views.item_list, name='all_items_list'), # <-- 新增這行，名稱為 'all_items_list'
 
-    # 各類別商品列表頁面
+    # 各類別商品列表頁面 (繼續使用 item_list 視圖，傳遞 category)
     path('cameras/', views.item_list, {'category': 'camera'}, name='camera_list'),
     path('lenses/', views.item_list, {'category': 'lens'}, name='lens_list'),
     path('others/', views.item_list, {'category': 'other'}, name='other_list'),
@@ -24,6 +27,6 @@ urlpatterns = [
     # 聯繫我們
     path('contact/', views.contact_us_view, name='contact_us'),
 
-    # <--- 新增這一行：商品關鍵字搜尋頁面 --->
+    # 商品關鍵字搜尋頁面
     path('search/', views.product_search_view, name='product_search'),
 ]

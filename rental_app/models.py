@@ -18,24 +18,27 @@ class Item(models.Model):
     description = models.TextField(blank=True, verbose_name="描述")
     price_per_day = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="每日租金")
     image_url = models.URLField(blank=True, null=True, verbose_name="圖片URL",
-                                help_text="請提供品項圖片的URL")
+                                 help_text="請提供品項圖片的URL")
     is_available = models.BooleanField(default=True, verbose_name="是否可用")
-    # 新增 category 欄位來區分品項類型
     category = models.CharField(
         max_length=20,
         choices=CATEGORY_CHOICES,
-        default='camera', # 預設為相機
+        default='camera',
         verbose_name="品項類別"
     )
+    # *** 請在上面這行之後新增以下這行 ***
+    is_recommended = models.BooleanField(default=False, verbose_name="推薦商品 (顯示於首頁)")
+    # *** 新增完成 ***
+
 
     class Meta:
         verbose_name = "商品"
-        verbose_name_plural = "商品" # 在管理後台顯示為「商品」
-        ordering = ['name'] # 依名稱排序
+        verbose_name_plural = "商品"
+        ordering = ['name']
 
     def __str__(self):
         return f"[{self.get_category_display()}] {self.name}"
-
+    
 class Rental(models.Model):
     """
     租賃訂單模型，記錄用戶租賃商品的詳情。

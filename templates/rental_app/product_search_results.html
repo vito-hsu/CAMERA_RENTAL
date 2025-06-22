@@ -35,7 +35,17 @@
                     {% endif %}
                 </div>
                 <div class="card-body d-flex flex-column">
-                    <span class="badge bg-secondary text-white mb-2 align-self-start">{{ item.get_category_display }}</span>
+                    {# *** START OF MODIFICATION *** #}
+                    {# 將類別和新的可用狀態標籤放在一個 flex 容器中，以便並排顯示 #}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-secondary text-white align-self-start">{{ item.get_category_display }}</span>
+                        {% if item.is_available %}
+                            <span class="badge bg-success text-white">可租用</span>
+                        {% else %}
+                            <span class="badge bg-danger text-white">不可用</span>
+                        {% endif %}
+                    </div>
+                    {# *** END OF MODIFICATION *** #}
                     <h5 class="card-title fw-bold text-dark">{{ item.name }}</h5>
                     <p class="card-text text-muted flex-grow-1">{{ item.description|truncatechars:100 }}</p>
                     <div class="mt-auto d-flex justify-content-between align-items-center">
@@ -52,7 +62,7 @@
         <div class="col-12 text-center my-5 animate__animated animate__fadeInUp">
             <i class="bi bi-exclamation-circle-fill text-warning display-1 mb-3"></i>
             <p class="fs-4 text-muted">很抱歉，沒有找到符合 "<strong class="text-primary">{{ query }}</strong>" 的商品。</p>
-            <p class="text-muted">請嘗試使用其他關鍵字或瀏覽我們的<a href="{% url 'item_list' %}" class="text-primary fw-bold text-decoration-none">所有商品</a>。</p>
+            <p class="text-muted">請嘗試使用其他關鍵字或瀏覽我們的<a href="{% url 'all_items_list' %}" class="text-primary fw-bold text-decoration-none">所有商品</a>。</p>
         </div>
     {% endif %}
 </div>

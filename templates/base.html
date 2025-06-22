@@ -294,7 +294,7 @@
     {# 導航欄 #}
     <nav class="navbar navbar-expand-lg custom-main-navbar py-3 shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'item_list' %}">
+            <a class="navbar-brand" href="{% url 'all_items_list' %}">
                 <i class="bi bi-camera-reels-fill"></i>
                 攝時租
             </a>
@@ -304,7 +304,7 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item mx-2">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'item_list' %}active{% endif %}" aria-current="page" href="{% url 'item_list' %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'homepage' %}active{% endif %}" aria-current="page" href="{% url 'homepage' %}">
                             <i class="bi bi-house-door-fill me-1"></i>首頁
                         </a>
                     </li>
@@ -364,7 +364,7 @@
                 <div class="col-md-4 col-lg-3 mb-4 mb-md-0">
                     <h5 class="animate__animated animate__fadeInUp animate__delay-0-7s">快速連結</h5>
                     <ul class="list-unstyled">
-                        <li class="animate__animated animate__fadeInUp animate__delay-0-8s"><a href="{% url 'item_list' %}">所有器材</a></li>
+                        <li class="animate__animated animate__fadeInUp animate__delay-0-8s"><a href="{% url 'all_items_list' %}">所有器材</a></li>
                         <li class="animate__animated animate__fadeInUp animate__delay-0-9s"><a href="{% url 'my_rentals' %}">我的租賃</a></li>
                         <li class="animate__animated animate__fadeInUp animate__delay-1s"><a href="{% url 'about_us' %}">關於我們</a></li>
                         {# 根據您的實際需求增加更多頁面連結 #}

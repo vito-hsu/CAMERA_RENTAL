@@ -18,8 +18,18 @@
     <div class="d-flex justify-content-end align-items-center mb-4 p-3 bg-white rounded-3 shadow-sm custom-sort-controls animate__animated animate__fadeIn animate__delay-1s">
         <label for="sort-by-select" class="form-label text-secondary me-3 mb-0 fw-bold fs-6">排序依據:</label>
         <select id="sort-by-select" class="form-select form-select-sm w-auto custom-select-fancy" onchange="location = this.value;">
-            {% url 'item_list' as base_item_list_url %}
+            {% comment %}
+            這裡的邏輯需要根據當前的URL名稱來動態生成基礎URL。
+            request.resolver_match.url_name 會給出當前匹配的URL名稱 (e.g., 'camera_list', 'all_items_list')
+            {% endcomment %}
+
+            {% comment %}
+            根據當前頁面的URL名稱來決定基礎 URL
+            例如，如果在 /cameras/ 頁面，基礎 URL 就是 /cameras/
+            如果在 /items/ 頁面，基礎 URL 就是 /items/
+            {% endcomment %}
             {% if category %}
+                {# 如果有 category 參數傳入 (說明是分類列表頁)，則使用對應的分類 URL 名稱 #}
                 {% if category == 'camera' %}
                     {% url 'camera_list' as current_base_url %}
                 {% elif category == 'lens' %}
@@ -28,7 +38,8 @@
                     {% url 'other_list' as current_base_url %}
                 {% endif %}
             {% else %}
-                {% url 'item_list' as current_base_url %}
+                {# 如果沒有 category 參數傳入 (說明是所有商品列表頁)，則使用 all_items_list #}
+                {% url 'all_items_list' as current_base_url %} {# <--- 核心修改：使用 'all_items_list' #}
             {% endif %}
 
             <option value="{{ current_base_url }}" {% if not sort_by %}selected{% endif %}>預設排序 (名稱)</option>
@@ -284,10 +295,10 @@
         }
         
         .unavailable-static {
-             border-radius: 1rem; /* More rounded pill shape */
-             padding: .4em .8em;
-             font-weight: 700;
-             opacity: 0.8;
+            border-radius: 1rem; /* More rounded pill shape */
+            padding: .4em .8em;
+            font-weight: 700;
+            opacity: 0.8;
         }
 
         /* Button Hover Effects - More pronounced and themed */
