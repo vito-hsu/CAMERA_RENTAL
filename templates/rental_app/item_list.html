@@ -19,17 +19,9 @@
         <label for="sort-by-select" class="form-label text-secondary me-3 mb-0 fw-bold fs-6">排序依據:</label>
         <select id="sort-by-select" class="form-select form-select-sm w-auto custom-select-fancy" onchange="location = this.value;">
             {% comment %}
-            這裡的邏輯需要根據當前的URL名稱來動態生成基礎URL。
-            request.resolver_match.url_name 會給出當前匹配的URL名稱 (e.g., 'camera_list', 'all_items_list')
-            {% endcomment %}
-
-            {% comment %}
             根據當前頁面的URL名稱來決定基礎 URL
-            例如，如果在 /cameras/ 頁面，基礎 URL 就是 /cameras/
-            如果在 /items/ 頁面，基礎 URL 就是 /items/
             {% endcomment %}
             {% if category %}
-                {# 如果有 category 參數傳入 (說明是分類列表頁)，則使用對應的分類 URL 名稱 #}
                 {% if category == 'camera' %}
                     {% url 'camera_list' as current_base_url %}
                 {% elif category == 'lens' %}
@@ -38,8 +30,7 @@
                     {% url 'other_list' as current_base_url %}
                 {% endif %}
             {% else %}
-                {# 如果沒有 category 參數傳入 (說明是所有商品列表頁)，則使用 all_items_list #}
-                {% url 'all_items_list' as current_base_url %} {# <--- 核心修改：使用 'all_items_list' #}
+                {% url 'all_items_list' as current_base_url %}
             {% endif %}
 
             <option value="{{ current_base_url }}" {% if not sort_by %}selected{% endif %}>預設排序 (名稱)</option>
@@ -49,29 +40,30 @@
     </div>
     {# --- 排序控制區塊結束 --- #}
 
-    {# Bootstrap row for grid layout + Masonry #}
-    {# 保持 col-lg-3 以在大螢幕顯示4列，Masonry 會處理垂直空間 #}
-    <div class="row item-list-grid g-4 animate__animated animate__fadeInUp animate__delay-1-2s">
+    {# Bootstrap row for classic grid layout #}
+    {# 使用 row-cols-* 和 col-* 確保每行數量和響應式調整 #}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 animate__animated animate__fadeInUp animate__delay-1-2s">
         {% for item in items %}
-            <div class="col-12 col-md-4 col-lg-3 d-flex align-items-stretch"> {# 注意：align-items-stretch 可能會影響瀑布流高度差異，但對於 d-flex 容器內的卡片可能必要 #}
+            {# 使用標準的 Bootstrap col 類別，並利用 d-flex align-items-stretch 確保每行卡片等高 #}
+            <div class="col d-flex align-items-stretch">
                 {# Enhanced Bootstrap Card Structure with custom styles #}
-                <div class="card item-card h-auto shadow-lg border-0 rounded-4 overflow-hidden position-relative"> {# h-100 改為 h-auto #}
+                <div class="card item-card h-100 shadow-lg border-0 rounded-4 overflow-hidden position-relative"> {# h-100 讓卡片在 flex 容器中等高 #}
                     {% if item.image_url %}
                         <div class="item-image-wrapper">
-                            <img src="{{ item.image_url }}" class="card-img-top object-fit-cover" alt="{{ item.name }}" loading="lazy"> {# 移除 style="height: 250px;" #}
+                            <img src="{{ item.image_url }}" class="card-img-top object-fit-cover" alt="{{ item.name }}" loading="lazy">
                             <div class="image-overlay"></div> {# Subtle overlay for image #}
                         </div>
                     {% else %}
                         <div class="item-image-wrapper">
-                            <img src="https://placehold.co/400x300/e0e0e0/333333?text=無圖片" class="card-img-top object-fit-cover" alt="Placeholder Image" loading="lazy"> {# 移除 style="height: 250px;" #}
+                            <img src="https://placehold.co/400x300/e0e0e0/333333?text=無圖片" class="card-img-top object-fit-cover" alt="Placeholder Image" loading="lazy">
                             <div class="image-overlay"></div>
                         </div>
                     {% endif %}
 
                     <div class="card-body d-flex flex-column p-4">
                         <h3 class="card-title text-dark fw-bold mb-2 fs-4 text-truncate" title="{{ item.name }}">{{ item.name }}</h3>
-                        {# 移除 item-description-clamp 或調整其行為以允許更多高度變化 #}
-                        <p class="card-text text-muted mb-3 flex-grow-1 item-description-content">{{ item.description|default:"暫無描述。" }}</p>
+                        {# 這裡保持文本截斷，以保持卡片視覺整潔 #}
+                        <p class="card-text text-muted mb-3 flex-grow-1 item-description-clamp">{{ item.description|default:"暫無描述。"|truncatechars:100 }}</p>
 
                         <p class="mb-2 fs-5 fw-bold text-primary">
                             <i class="bi bi-currency-dollar me-1"></i> 每日租金: NT$<span class="amount">{{ item.price_per_day }}</span>
@@ -100,7 +92,7 @@
                 </div>
             </div>
         {% empty %}
-            {# 更具藝術感的空狀態 #}
+            {# 空狀態區塊保持不變 #}
             <div class="col-12 py-5 my-5 text-center empty-state-card animate__animated animate__fadeInUp">
                 <div class="icon-wrapper mb-4 animate__animated animate__bounceIn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" fill="currentColor" class="bi bi-camera-reels-fill text-info" viewBox="0 0 16 16">
@@ -130,39 +122,17 @@
         </a>
     </div>
 
-    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var elem = document.querySelector('.item-list-grid');
-            if (elem) {
-                var msnry = new Masonry(elem, {
-                    itemSelector: '.col-12', // 選取每個商品卡片容器
-                    columnWidth: '.col-lg-3', // Masonry 會參考這個寬度來計算列數和間距
-                    gutter: 24, // 與 g-4 (1.5rem * 16px = 24px) 保持一致
-                    percentPosition: true,
-                    resize: true // 窗口大小改變時重新佈局
-                });
+    {# 移除 Masonry.js 和 imagesLoaded 的 JavaScript 引用 #}
+    {# <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script> #}
+    {# <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script> #}
+    {# 移除 Masonry 初始化腳本 #}
 
-                // 確保所有圖片載入後再進行佈局，防止錯位
-                imagesLoaded(elem).on('always', function() {
-                    msnry.layout();
-                });
-
-                // 當視窗大小改變時，重新佈局 Masonry
-                window.addEventListener('resize', function() {
-                    msnry.layout();
-                });
-            }
-        });
-    </script>
-
-    {# 引入 Animate.css 以實現更多動畫效果 #}
+    {# 引入 Animate.css #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
-    {# Custom Styles for even fancier elements #}
+    {# Custom Styles #}
     <style>
-        /* CSS Variables for a Custom Palette (optional, but good practice for "fancy") */
+        /* CSS Variables for a Custom Palette */
         :root {
             --primary-accent: #5a7d9b; /* Your existing primary color */
             --secondary-accent: #a8c1f0; /* Your existing secondary color */
@@ -175,6 +145,7 @@
             --card-shadow-light: rgba(0,0,0,0.08);
             --card-shadow-hover: rgba(0,0,0,0.2);
             --transition-ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --grid-gutter: 24px; /* 與 g-4 保持一致 */
         }
 
         /* Fancy Header Enhancements */
@@ -183,7 +154,7 @@
         }
         .custom-header-section h2 {
             font-family: 'Inter', sans-serif;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.05); /* Subtle text shadow */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
         }
         .custom-header-section .lead {
             font-family: 'Inter', sans-serif;
@@ -194,7 +165,7 @@
         .header-divider {
             width: 80px;
             height: 4px;
-            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent)); /* Gradient divider */
+            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
             margin: 1.5rem auto 0 auto;
             border-radius: 2px;
         }
@@ -212,8 +183,8 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             border-color: var(--medium-grey);
             transition: all 0.3s ease;
-            appearance: none; /* Remove default arrow */
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); /* Custom SVG arrow */
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
             background-size: 16px 12px;
@@ -224,45 +195,39 @@
             outline: none;
         }
 
-        /* Item Card Enhancements */
+        /* Item Card Enhancements - 回歸經典 Bootstrap 網格樣式 */
         .item-card {
-            transition: transform 0.5s var(--transition-ease-out-quad), box-shadow 0.5s var(--transition-ease-out-quad), border-color 0.5s var(--transition-ease-out-quad);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: pointer;
             border: 1px solid var(--card-border-light);
-            box-shadow: 0 6px 18px var(--card-shadow-light); /* More refined initial shadow */
-            border-bottom: 4px solid transparent; /* For hover underline effect */
-            height: auto !important; /* 讓卡片高度根據內容自動調整，實現瀑布流 */
+            box-shadow: 0 6px 18px var(--card-shadow-light); /* 更精緻的初始陰影 */
+            /* 由於 h-100，卡片高度會自動與行內最高的卡片對齊 */
         }
+
         .item-card:hover {
-            transform: translateY(-12px) scale(1.03); /* More pronounced lift and scale */
-            box-shadow: 0 20px 40px var(--card-shadow-hover); /* Deeper, wider shadow */
-            border-color: var(--primary-accent); /* Border color changes on hover */
-            border-bottom: 4px solid var(--primary-accent); /* Blue underline */
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--card-shadow-hover) !important;
         }
 
         .item-image-wrapper {
-            position: relative;
+            width: 100%;
+            height: 200px; /* 固定圖片高度，以保持卡片頂部視覺一致 */
             overflow: hidden;
-            border-bottom: 1px solid var(--medium-grey); /* Separator */
-            /* 允許圖片容器有彈性高度 */
-            min-height: 150px; /* 最小高度 */
-            max-height: 350px; /* 最大高度，防止圖片過高 */
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #e9ecef; /* 預設背景色 */
+            background-color: #e9ecef;
         }
 
         .item-image-wrapper img {
             width: 100%;
-            height: auto; /* 關鍵：讓圖片保持原始縱橫比 */
-            display: block; /* 移除圖片底部預設空隙 */
-            object-fit: cover; /* 裁剪圖片以填充容器，但高度是彈性的 */
-            transition: transform 0.6s var(--transition-ease-out-quad), filter 0.6s var(--transition-ease-out-quad);
+            height: 100%; /* 圖片填充固定高度容器 */
+            object-fit: cover;
+            transition: transform 0.3s ease-in-out;
         }
 
         .item-card:hover .item-image-wrapper img {
-            transform: scale(1.1); /* Stronger zoom on image hover */
-            filter: brightness(0.85); /* Slightly darken image */
+            transform: scale(1.05); /* 鼠標懸停時圖片輕微放大 */
         }
 
         .image-overlay {
@@ -271,79 +236,61 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.2) 100%); /* Radial gradient overlay */
+            background: radial-gradient(circle at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.2) 100%);
             opacity: 0;
             transition: opacity 0.4s ease;
-            pointer-events: none; /* Allow clicks to pass through */
+            pointer-events: none;
         }
 
         .item-card:hover .image-overlay {
-            opacity: 1; /* Show overlay on hover */
+            opacity: 1;
         }
 
-        /* Description content - 允許它影響高度 */
-        .item-description-content {
-            /* 如果您想保留截斷，但讓其影響高度，可以這樣做 */
-            /* 例如，只設定 max-height，或者移除 -webkit-line-clamp 以允許所有文字顯示 */
-            /* 如果 flex-grow-1 讓它固定高度，可以重新審視 */
-            overflow: hidden; /* 仍然隱藏溢出內容 */
-            text-overflow: ellipsis; /* 顯示省略號 */
-            /* 移除 min-height 或 -webkit-line-clamp 如果它們導致了高度統一 */
-            /* 範例: 如果您希望它最多顯示5行，可以這樣設 */
+        /* 描述文字樣式：截斷並確保一致性 */
+        .item-description-clamp {
             display: -webkit-box;
-            -webkit-line-clamp: 5; /* 允許最多5行，更多內容會被截斷 */
+            -webkit-line-clamp: 3; /* 限制為 3 行 */
             -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: calc(1.2em * 3); /* 確保至少三行高度，即使內容少 */
+            flex-grow: 1; /* 讓它填滿剩餘空間 */
         }
 
-
-        /* Availability Badges - More distinct Pulsating effect */
+        /* Availability Badges - 保持不變 */
         @keyframes pulse-animation {
-            0% {
-                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); /* Success color */
-            }
-            70% {
-                box-shadow: 0 0 0 15px rgba(40, 167, 69, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
         }
 
         .available-pulse {
             animation: pulse-animation 2s infinite cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border-radius: 1rem; /* More rounded pill shape */
+            border-radius: 1rem;
             padding: .4em .8em;
             font-weight: 700;
         }
 
         .unavailable-static {
-            border-radius: 1rem; /* More rounded pill shape */
+            border-radius: 1rem;
             padding: .4em .8em;
             font-weight: 700;
             opacity: 0.8;
         }
 
-        /* Button Hover Effects - More pronounced and themed */
-        /* 注意：這些按鈕樣式已移動到 base.html 的 <style> 區塊中，此處僅為備份或特定覆蓋 */
-        .btn-fancy-hover {
-            /* 這些樣式現在主要由 base.html 中的 .custom-btn 和 .custom-btn-secondary 繼承 */
-            /* 如果需要覆蓋，可以在這裡重新定義 */
-        }
-        /* ... 其他按鈕樣式 ... */
-
-        /* Empty State Styling - More central and visually appealing */
+        /* Empty State Styling - 保持不變 */
         .empty-state-card {
             background-color: white;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             padding: 60px 30px;
             max-width: 600px;
-            margin: 80px auto; /* Centered with more vertical margin */
+            margin: 80px auto;
             border: 1px solid #e0e0e0;
-            position: relative; /* For icon positioning */
+            position: relative;
             overflow: hidden;
         }
-        .empty-state-card::before { /* Subtle background pattern */
+        .empty-state-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -356,36 +303,29 @@
             opacity: 0.5;
             z-index: 0;
         }
-        .empty-state-card > * { /* Ensure content is above the pattern */
+        .empty-state-card > * {
             position: relative;
             z-index: 1;
         }
 
         .empty-state-card .icon-wrapper {
             position: relative;
-            display: inline-block; /* To contain the absolute positioned icon */
+            display: inline-block;
         }
-        .empty-state-card .icon-wrapper svg.bi-x-circle-fill { /* Red X icon over camera */
+        .empty-state-card .icon-wrapper svg.bi-x-circle-fill {
             position: absolute;
-            top: -10px; /* Adjust as needed */
+            top: -10px;
             left: 50%;
             transform: translateX(-50%);
         }
         .empty-state-card .btn {
             font-weight: 600;
         }
-        /* .btn-fancy-hover-small 現在由 base.html 定義 */
 
-
-        /* Animated Call to Action Button */
-        /* 這些樣式現在主要由 base.html 中的 .animate-cta-button 繼承 */
-        /* 如果需要覆蓋，可以在這裡重新定義 */
-
-
-        /* Responsive Adjustments (more refined) */
+        /* Responsive Adjustments */
         @media (max-width: 992px) {
             .item-card:hover {
-                transform: translateY(-8px) scale(1.01); /* Slightly less dramatic for tablets */
+                transform: translateY(-8px) scale(1.01);
                 box-shadow: 0 12px 25px rgba(0,0,0,0.18);
             }
         }
@@ -410,12 +350,6 @@
             }
             .custom-select-fancy {
                 width: 100%;
-            }
-            .item-card {
-                 margin: 0 auto 1.5rem auto;
-            }
-            .item-description-content { /* 使用新的類別名稱 */
-                -webkit-line-clamp: 4; /* 更多行數在小螢幕上 */
             }
             .empty-state-card {
                 padding: 40px 20px;
