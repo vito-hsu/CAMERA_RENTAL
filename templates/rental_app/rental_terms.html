@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    {# 頁面標題區塊 - 沿用 rental_app 的風格 #}
+    <div class="text-center mb-5 pb-4 custom-header-section animate__animated animate__fadeInDown">
+        <h2 class="display-4 fw-bolder text-dark mb-2">
+            {{ page_title }}
+        </h2>
+        <p class="lead text-muted fst-italic animate__animated animate__fadeInUp animate__delay-0-5s">
+            在使用我們的服務前，請詳閱以下租賃規章，確保您的權益。
+        </p>
+        <div class="header-divider animate__animated animate__fadeInUp animate__delay-0-8s"></div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="card p-4 p-md-5 shadow-lg border-0 rounded-4 animate__animated animate__fadeInUp animate__delay-1s">
+                <div class="card-body">
+
+                    {# 交易方式 #}
+                    <section class="mb-5 pb-3 border-bottom">
+                        <h3 class="h4 fw-bold mb-3 text-primary">📦 交易方式</h3>
+                        <div class="mb-4">
+                            <h4 class="h5 fw-semibold mb-2 text-dark">取貨方式：</h4>
+                            <ul class="list-unstyled custom-checklist">
+                                <li>採面交取貨，出貨前會先拍攝商品現況並確認無異常。</li>
+                                <li>面交當下請再次檢查商品，確認無誤後即開始租賃。詳細面交地點請見下方資訊。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="h5 fw-semibold mb-2 text-dark">還貨方式：</h4>
+                            <ul class="list-unstyled custom-checklist">
+                                <li>歡迎使用超商寄件或宅配方式歸還，宅配費由本店吸收。</li>
+                                <li>若商品有損壞，將送修至桃園 919，相對應費用為報修金額的 **兩倍賠償**。</li>
+                                <li>還貨日期以寄件日為準，例：1/2 租出、1/5寄回，則計收 3 天租金。</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    {# 計費方式 #}
+                    <section class="mb-5 pb-3 border-bottom">
+                        <h3 class="h4 fw-bold mb-3 text-primary">💰 計費方式</h3>
+                        <ul class="list-unstyled custom-checklist">
+                            <li>機身與鏡頭分開計價，鏡頭一般較便宜，高階鏡頭除外。詳細租金請參考後續文章。</li>
+                            <li>忠實顧客與熟人介紹可享優惠價格。</li>
+                        </ul>
+                        <p class="h5 fw-semibold mt-4 mb-2 text-dark">🔖 最低租金：</p>
+                        <p class="mb-2">單次租用最低收費為 <strong class="text-danger">$700</strong>，未達者以 <strong class="text-danger">$700</strong> 計算。</p>
+                        <p class="h5 fw-semibold mt-4 mb-2 text-dark">💳 付款方式：</p>
+                        <p class="mb-0">歸還器材後提供匯款帳號，請於寄件完成後匯款即可完成本次租賃。</p>
+                    </section>
+
+                    {# 押金規定 #}
+                    <section class="mb-5 pb-3 border-bottom">
+                        <h3 class="h4 fw-bold mb-3 text-primary">🔐 押金規定</h3>
+                        <ul class="list-unstyled custom-checklist">
+                            <li>熱門新機（如 Fujifilm XM5）：需酌收押金。</li>
+                            <li>老機型（如 Canon 5D/6D/7D）：免收押金。</li>
+                        </ul>
+                    </section>
+
+                    {# 商品目錄 & 器材照片 #}
+                    <section class="mb-5 pb-3 border-bottom">
+                        <h3 class="h4 fw-bold mb-3 text-primary">📚 商品目錄 & 器材照片</h3>
+                        <p class="mb-2">請參考後續文章。</p>
+                        <p class="mb-0">所有照片皆為實機拍攝，僅供參考，並非示範最適合拍攝題材。</p>
+                    </section>
+
+                    {# 面交地點 #}
+                    <section class="mb-5 pb-3 border-bottom">
+                        <h3 class="h4 fw-bold mb-3 text-primary">📍 面交地點（桃園區）：</h3>
+                        <ul class="list-unstyled custom-checklist">
+                            <li>國泰社區</li>
+                            <li>龍安派出所周邊</li>
+                            <li>中路派出所周邊</li>
+                        </ul>
+                    </section>
+
+                    {# 推薦租借對象 #}
+                    <section class="mb-5 pb-3 border-bottom">
+                        <h3 class="h4 fw-bold mb-3 text-primary">👥 推薦租借對象</h3>
+                        <ul class="list-unstyled custom-checklist">
+                            <li>出國經過桃園，臨時需用相機的旅客</li>
+                            <li>攝影新手，還在摸索適合自己的器材</li>
+                            <li>家庭出遊、非商業拍攝需求者</li>
+                            <li>想體驗各種器材的攝影愛好者</li>
+                            <li>新手爸媽，想找適合拍小孩的設備</li>
+                        </ul>
+                    </section>
+
+                    {# 使用建議 #}
+                    <section class="mb-5 pb-3 border-bottom">
+                        <h3 class="h4 fw-bold mb-3 text-primary">🎯 使用建議</h3>
+                        <ul class="list-unstyled custom-checklist">
+                            <li>商業攝影或自媒體長期需求者，建議直接購買新機或二手器材。</li>
+                            <li>外縣市朋友建議租借達 7 天以上，本店提供額外優惠。</li>
+                        </ul>
+                        <p class="mb-0 fst-italic text-muted">例：D500 + Nikon 200-500mm f/5.6E 一般 7 天租金 $4900，若從台中前來，可折扣為 $4500</p>
+                    </section>
+
+                    {# 注意事項 #}
+                    <section class="mb-0">
+                        <h3 class="h4 fw-bold mb-3 text-warning">⚠️ 注意事項</h3>
+                        <ul class="list-unstyled custom-checklist">
+                            <li>若您不熟悉相機操作，請先行學習基本使用方法，或由本店提供簡單教學後再行租用，以避免操作不當導致損壞。</li>
+                            <li>如需更多資訊或想先聊聊，歡迎私訊詢問😊</li>
+                        </ul>
+                        <p class="mt-4 fst-italic text-secondary">我們不是大企業，只是用心經營、交朋友的小店。期待與您分享攝影的樂趣！</p>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# 引入您網站已有的 custom styles，確保頁面風格一致 #}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<style>
+    /* CSS Variables for a Custom Palette (從您現有的 style 中複製過來，確保顏色和過渡效果一致) */
+    :root {
+        --primary-accent: #5a7d9b;
+        --secondary-accent: #a8c1f0;
+        --light-grey: #f8f9fa;
+        --medium-grey: #e9ecef;
+        --dark-grey-text: #343a40;
+        --success-color: #28a745;
+        --danger-color: #dc3545;
+        --card-border-light: #f0f0f0;
+        --card-shadow-light: rgba(0,0,0,0.08);
+        --card-shadow-hover: rgba(0,0,0,0.2);
+        --transition-ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 與 item_list.html 相同的標題區塊樣式 */
+    .custom-header-section {
+        padding-bottom: 2.5rem;
+    }
+    .custom-header-section h2 {
+        font-family: 'Inter', sans-serif;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+    }
+    .custom-header-section .lead {
+        font-family: 'Inter', sans-serif;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .header-divider {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+        margin: 1.5rem auto 0 auto;
+        border-radius: 2px;
+    }
+
+    /* Card 樣式 */
+    .card {
+        border-radius: 1rem !important;
+        box-shadow: 0 10px 30px var(--card-shadow-light) !important;
+    }
+
+    /* 自定義列表樣式 */
+    .custom-checklist li {
+        position: relative;
+        padding-left: 1.75rem; /* 留出空間給圖標 */
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+        color: var(--dark-grey-text);
+    }
+
+    .custom-checklist li:last-child {
+        margin-bottom: 0;
+    }
+
+    .custom-checklist li::before {
+        content: "✅"; /* 使用表情符號作為圖標 */
+        position: absolute;
+        left: 0;
+        top: 0.1rem;
+        font-size: 1.1em;
+        line-height: inherit;
+    }
+
+    /* 確保響應式動畫禁用在小螢幕上 */
+    @media (max-width: 768px) {
+        .animate__animated {
+            animation: none !important;
+        }
+        .display-4 {
+            font-size: 2.5rem;
+        }
+        .lead {
+            font-size: 1.1rem;
+        }
+        .header-divider {
+            width: 60px;
+            margin-top: 1rem;
+        }
+    }
+</style>
+{% endblock %}

@@ -14,6 +14,11 @@ from django.db.models import Q
 from .models import Item, Rental 
 from .forms import RentalForm
 
+def rental_terms(request):
+    page_title = "租賃規章"
+    return render(request, 'rental_app/rental_terms.html', {'page_title': page_title})
+
+
 def homepage(request):
     """
     顯示網站首頁，現在會顯示後台設定的推薦商品。

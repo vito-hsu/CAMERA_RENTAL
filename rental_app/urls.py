@@ -29,4 +29,7 @@ urlpatterns = [
 
     # 商品關鍵字搜尋頁面
     path('search/', views.product_search_view, name='product_search'),
+
+    # 新增租賃規章
+    path('rental-terms/', views.rental_terms, name='rental_terms'),
 ]
