@@ -5,9 +5,9 @@
 
 {% block content %}
     {# 首頁英雄區 #}
-    {# 使用 hero_camera2.jpg 作為首頁的英雄區圖片 #}
-    {% with hero_image="images/hero/hero_camera2.jpg" hero_title="探索無限可能" hero_subtitle="您的專業攝影器材，觸手可及。" %}
-        <section class="hero-section animate__animated animate__fadeIn" data-hero-image="{% static hero_image %}">
+    {# 將這裡的 URL 替換為您從 Pexels 複製到的直接圖片連結 #}
+    {% with hero_image_url="https://images.pexels.com/photos/1264210/pexels-photo-1264210.jpeg" hero_title="探索無限可能" hero_subtitle="您的專業攝影器材，觸手可及。" %}
+        <section class="hero-section animate__animated animate__fadeIn" data-hero-image="{{ hero_image_url }}">
             <div class="hero-content">
                 <h1 class="hero-title animate__animated animate__fadeInDown animate__delay-0-5s">
                     <i class="bi bi-camera-reels-fill me-3"></i>{{ hero_title }}
