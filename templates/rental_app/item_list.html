@@ -50,32 +50,33 @@
     {# --- 排序控制區塊結束 --- #}
 
     {# Bootstrap row for grid layout + Masonry #}
-    <div class="row item-list-grid g-4 justify-content-center animate__animated animate__fadeInUp animate__delay-1-2s">
+    {# 保持 col-lg-3 以在大螢幕顯示4列，Masonry 會處理垂直空間 #}
+    <div class="row item-list-grid g-4 animate__animated animate__fadeInUp animate__delay-1-2s">
         {% for item in items %}
-            {# 主要修改點：col-md-6 改為 col-md-4，col-lg-4 改為 col-lg-3 #}
-            <div class="col-12 col-md-4 col-lg-3 d-flex align-items-stretch">
+            <div class="col-12 col-md-4 col-lg-3 d-flex align-items-stretch"> {# 注意：align-items-stretch 可能會影響瀑布流高度差異，但對於 d-flex 容器內的卡片可能必要 #}
                 {# Enhanced Bootstrap Card Structure with custom styles #}
-                <div class="card item-card h-100 shadow-lg border-0 rounded-4 overflow-hidden position-relative">
+                <div class="card item-card h-auto shadow-lg border-0 rounded-4 overflow-hidden position-relative"> {# h-100 改為 h-auto #}
                     {% if item.image_url %}
                         <div class="item-image-wrapper">
-                            <img src="{{ item.image_url }}" class="card-img-top object-fit-cover" alt="{{ item.name }}" loading="lazy" style="height: 250px;">
+                            <img src="{{ item.image_url }}" class="card-img-top object-fit-cover" alt="{{ item.name }}" loading="lazy"> {# 移除 style="height: 250px;" #}
                             <div class="image-overlay"></div> {# Subtle overlay for image #}
                         </div>
                     {% else %}
                         <div class="item-image-wrapper">
-                            <img src="https://placehold.co/400x300/e0e0e0/333333?text=無圖片" class="card-img-top object-fit-cover" alt="Placeholder Image" loading="lazy" style="height: 250px;">
+                            <img src="https://placehold.co/400x300/e0e0e0/333333?text=無圖片" class="card-img-top object-fit-cover" alt="Placeholder Image" loading="lazy"> {# 移除 style="height: 250px;" #}
                             <div class="image-overlay"></div>
                         </div>
                     {% endif %}
-                    
+
                     <div class="card-body d-flex flex-column p-4">
                         <h3 class="card-title text-dark fw-bold mb-2 fs-4 text-truncate" title="{{ item.name }}">{{ item.name }}</h3>
-                        <p class="card-text text-muted mb-3 flex-grow-1 fs-6 item-description-clamp">{{ item.description|default:"暫無描述。" }}</p>
-                        
+                        {# 移除 item-description-clamp 或調整其行為以允許更多高度變化 #}
+                        <p class="card-text text-muted mb-3 flex-grow-1 item-description-content">{{ item.description|default:"暫無描述。" }}</p>
+
                         <p class="mb-2 fs-5 fw-bold text-primary">
                             <i class="bi bi-currency-dollar me-1"></i> 每日租金: NT$<span class="amount">{{ item.price_per_day }}</span>
                         </p>
-                        
+
                         <p class="card-text mb-4 fs-6 text-muted">狀態:
                             {% if item.is_available %}
                                 <span class="badge bg-success available-pulse">✅ 可用</span>
@@ -83,7 +84,7 @@
                                 <span class="badge bg-danger unavailable-static">❌ 不可用</span>
                             {% endif %}
                         </p>
-                        
+
                         <div class="mt-auto">
                             {% if item.is_available %}
                                 <a href="{% url 'item_detail' item.pk %}" class="btn custom-btn custom-btn-secondary w-100 btn-fancy-hover">
@@ -136,21 +137,26 @@
             var elem = document.querySelector('.item-list-grid');
             if (elem) {
                 var msnry = new Masonry(elem, {
-                    itemSelector: '.col-12', 
-                    {# 主要修改點：columnWidth 改為 '.col-lg-3' #}
-                    columnWidth: '.col-lg-3', 
-                    gutter: 24, 
+                    itemSelector: '.col-12', // 選取每個商品卡片容器
+                    columnWidth: '.col-lg-3', // Masonry 會參考這個寬度來計算列數和間距
+                    gutter: 24, // 與 g-4 (1.5rem * 16px = 24px) 保持一致
                     percentPosition: true,
-                    resize: true
+                    resize: true // 窗口大小改變時重新佈局
                 });
 
+                // 確保所有圖片載入後再進行佈局，防止錯位
                 imagesLoaded(elem).on('always', function() {
+                    msnry.layout();
+                });
+
+                // 當視窗大小改變時，重新佈局 Masonry
+                window.addEventListener('resize', function() {
                     msnry.layout();
                 });
             }
         });
     </script>
-    
+
     {# 引入 Animate.css 以實現更多動畫效果 #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
@@ -224,6 +230,7 @@
             border: 1px solid var(--card-border-light);
             box-shadow: 0 6px 18px var(--card-shadow-light); /* More refined initial shadow */
             border-bottom: 4px solid transparent; /* For hover underline effect */
+            height: auto !important; /* 讓卡片高度根據內容自動調整，實現瀑布流 */
         }
         .item-card:hover {
             transform: translateY(-12px) scale(1.03); /* More pronounced lift and scale */
@@ -236,9 +243,20 @@
             position: relative;
             overflow: hidden;
             border-bottom: 1px solid var(--medium-grey); /* Separator */
+            /* 允許圖片容器有彈性高度 */
+            min-height: 150px; /* 最小高度 */
+            max-height: 350px; /* 最大高度，防止圖片過高 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e9ecef; /* 預設背景色 */
         }
 
         .item-image-wrapper img {
+            width: 100%;
+            height: auto; /* 關鍵：讓圖片保持原始縱橫比 */
+            display: block; /* 移除圖片底部預設空隙 */
+            object-fit: cover; /* 裁剪圖片以填充容器，但高度是彈性的 */
             transition: transform 0.6s var(--transition-ease-out-quad), filter 0.6s var(--transition-ease-out-quad);
         }
 
@@ -263,16 +281,20 @@
             opacity: 1; /* Show overlay on hover */
         }
 
-        /* Description clamping for consistent card height */
-        .item-description-clamp {
+        /* Description content - 允許它影響高度 */
+        .item-description-content {
+            /* 如果您想保留截斷，但讓其影響高度，可以這樣做 */
+            /* 例如，只設定 max-height，或者移除 -webkit-line-clamp 以允許所有文字顯示 */
+            /* 如果 flex-grow-1 讓它固定高度，可以重新審視 */
+            overflow: hidden; /* 仍然隱藏溢出內容 */
+            text-overflow: ellipsis; /* 顯示省略號 */
+            /* 移除 min-height 或 -webkit-line-clamp 如果它們導致了高度統一 */
+            /* 範例: 如果您希望它最多顯示5行，可以這樣設 */
             display: -webkit-box;
-            -webkit-line-clamp: 3; /* Limit to 3 lines */
+            -webkit-line-clamp: 5; /* 允許最多5行，更多內容會被截斷 */
             -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            min-height: 3.6em; /* Approx height for 3 lines */
-            line-height: 1.2; /* Tighter line height for description */
         }
+
 
         /* Availability Badges - More distinct Pulsating effect */
         @keyframes pulse-animation {
@@ -293,7 +315,7 @@
             padding: .4em .8em;
             font-weight: 700;
         }
-        
+
         .unavailable-static {
             border-radius: 1rem; /* More rounded pill shape */
             padding: .4em .8em;
@@ -392,9 +414,8 @@
             .item-card {
                  margin: 0 auto 1.5rem auto;
             }
-            .item-description-clamp {
-                -webkit-line-clamp: 4; /* More lines on smaller cards */
-                min-height: 4.8em;
+            .item-description-content { /* 使用新的類別名稱 */
+                -webkit-line-clamp: 4; /* 更多行數在小螢幕上 */
             }
             .empty-state-card {
                 padding: 40px 20px;
