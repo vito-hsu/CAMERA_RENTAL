@@ -372,6 +372,8 @@
                     <ul class="list-unstyled">
                         <li class="animate__animated animate__fadeInUp animate__delay-0-8s"><a href="{% url 'all_items_list' %}">所有器材</a></li>
                         <li class="animate__animated animate__fadeInUp animate__delay-0-9s"><a href="{% url 'my_rentals' %}">我的租賃</a></li>
+                        {# 將租賃規章連結也加到頁腳，方便用戶找到 #}
+                        <li class="animate__animated animate__fadeInUp animate__delay-0-9s"><a href="{% url 'rental_terms' %}">租賃規章</a></li>
                         <li class="animate__animated animate__fadeInUp animate__delay-1s"><a href="{% url 'about_us' %}">關於我們</a></li>
                         {# 根據您的實際需求增加更多頁面連結 #}
                     </ul>
@@ -388,7 +390,8 @@
                     <h5 class="animate__animated animate__fadeInUp animate__delay-1-5s">追蹤我們</h5>
                     <div class="social-icons mt-3">
                         <a href="#" class="list-inline-item me-3 animate__animated animate__bounceIn animate__delay-1-6s"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="list-inline-item me-3 animate__animated animate__bounceIn animate__delay-1-7s"><i class="bi bi-instagram"></i></a>
+                        {# 將 Instagram 連結更新為您的實際連結 #}
+                        <a href="https://www.instagram.com/cameraisallyouneed?igsh=MXRjeHB1M2RzM2R1MA==" target="_blank" rel="noopener noreferrer" class="list-inline-item me-3 animate__animated animate__bounceIn animate__delay-1-7s"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="list-inline-item me-3 animate__animated animate__bounceIn animate__delay-1-8s"><i class="bi bi-youtube"></i></a>
                         <a href="#" class="list-inline-item animate__animated animate__bounceIn animate__delay-1-9s"><i class="bi bi-line"></i></a>
                     </div>
