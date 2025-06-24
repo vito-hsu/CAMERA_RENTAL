@@ -12,9 +12,7 @@ class Item(models.Model):
     CATEGORY_CHOICES = [
         ('camera', '相機'),
         ('lens', '鏡頭'),
-        ('accessory', '配件'), # <--- 修正或新增：將 'other' 改為 'accessory' 或其他更具體的
-        ('drone', '空拍機'),    # <--- 新增
-        ('lighting', '燈光設備'), # <--- 新增
+        ('other', '其他'), # <--- Changed back to 'other'
     ]
 
     name = models.CharField(max_length=200, verbose_name="品項名稱")
@@ -24,10 +22,10 @@ class Item(models.Model):
     deposit = models.DecimalField(max_digits=10, decimal_places=0, default=0, verbose_name="商品押金")
     # ------------------------------------
     image_url = models.URLField(blank=True, null=True, verbose_name="圖片URL",
-                                 help_text="請提供品項圖片的URL")
+                                  help_text="請提供品項圖片的URL")
     is_available = models.BooleanField(default=True, verbose_name="是否可用")
     category = models.CharField(
-        max_length=50, # <--- 擴大長度以應對新增的類別
+        max_length=50, # <--- This length is fine for the new choices too
         choices=CATEGORY_CHOICES,
         default='camera',
         verbose_name="品項類別"
@@ -44,8 +42,8 @@ class Item(models.Model):
 
     def __str__(self):
         return f"[{self.get_category_display()}] {self.name}"
-    
-# 您可能還有 Rental 或其他模型，這裡只關注 Item 模型
+
+# You might still have your Rental model here
 class Rental(models.Model):
     """
     租賃訂單模型，記錄用戶租賃商品的詳情。
