@@ -1,40 +1,102 @@
+{# rental_app/item_detail.html #}
 {% extends 'base.html' %}
 {% load static %}
 {% load widget_tweaks %}
 
 {% block title %}{{ item.name }} - 商品詳情{% endblock %}
 
+{% block extra_css %}
+{# Flatpickr CSS #}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    /* 確保表單控制項在焦點時有 Bootstrap 默認樣式 */
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    }
+    .form-label {
+        font-weight: 500; /* 加粗表單標籤 */
+    }
+    .text-danger.small {
+        font-size: 0.85em; /* 錯誤提示更小一些 */
+        color: #dc3545 !important; /* 強制使用 Bootstrap red */
+    }
+    .form-text {
+        color: #6c757d; /* Bootstrap text-muted 顏色 */
+    }
+    .card {
+        border-radius: 1rem; /* 更大的圓角 */
+        overflow: hidden; /* 確保內容不會溢出圓角 */
+        border: none; /* 移除默認邊框 */
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1); /* 更明顯的陰影 */
+    }
+    .card-body {
+        padding: 3rem !important; /* 增加內部填充 */
+    }
+    /* 新增樣式來強調總租金參考 */
+    #totalRentalEstimate {
+        font-size: 1.25rem; /* 更大字體 */
+        font-weight: 600; /* 更粗字體 */
+        color: #007bff; /* Bootstrap primary color */
+        margin-top: 1rem;
+        display: block; /* 獨立一行 */
+        text-align: center;
+    }
+    /* Flatpickr 特定樣式調整 */
+    .flatpickr-calendar {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important; /* 增加陰影 */
+        border-radius: 0.5rem; /* 圓角 */
+    }
+    .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
+        background: #007bff; /* Bootstrap primary blue */
+        border-color: #007bff;
+    }
+    .flatpickr-day.today.selected {
+        background: #0056b3; /* 更深的藍色 */
+        border-color: #0056b3;
+    }
+    .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange {
+        box-shadow: -5px 0 0 #007bff, 5px 0 0 #007bff; /* 使選中的日期範圍看起來更平滑 */
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container my-5">
-    <div class="card shadow-lg border-0">
-        <div class="card-body p-5">
+    <div class="card">
+        <div class="card-body">
             {# 商品圖片區塊 #}
             <div class="row mb-5">
                 <div class="col-12 d-flex justify-content-center align-items-center">
                     {% if item.image_url %}
-                        <img src="{{ item.image_url }}" class="img-fluid rounded-3 shadow-sm" alt="{{ item.name }}" style="max-height: 500px; object-fit: contain;"> {# 圖片陰影稍微調小 #}
+                        <img src="{{ item.image_url }}" class="img-fluid rounded-3 shadow-sm animate__animated animate__fadeInUp" alt="{{ item.name }}" style="max-height: 500px; object-fit: contain;">
                     {% else %}
-                        <img src="{% static 'images/placeholder.png' %}" class="img-fluid rounded-3 shadow-sm" alt="無圖片" style="max-height: 500px; object-fit: contain;">
+                        <img src="{% static 'images/placeholder.png' %}" class="img-fluid rounded-3 shadow-sm animate__animated animate__fadeInUp" alt="無圖片" style="max-height: 500px; object-fit: contain;">
                     {% endif %}
                 </div>
             </div>
 
             {# 商品資訊和租賃表單區塊 #}
-            <div class="row justify-content-center"> {# 使下方的內容在水平方向上居中，如果內容較窄會更美觀 #}
-                <div class="col-lg-8 col-md-10"> {# 在大螢幕上限制內容寬度，避免過寬 #}
-                    <h1 class="display-5 fw-bold mb-3 text-center text-primary">{{ item.name }}</h1> {# 標題強制居中 #}
-                    <p class="text-muted fs-5 mb-4 text-center"><i class="bi bi-tag-fill me-2"></i>{{ item.get_category_display }}</p>
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10">
+                    <h1 class="display-5 fw-bold mb-3 text-center text-primary">{{ item.name }}</h1>
+                    <p class="text-muted fs-5 mb-4 text-center"><i class="bi bi-tag-fill me-2 text-warning"></i>{{ item.get_category_display }}</p>
                     
-                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center mb-4"> {# 在小螢幕上垂直堆疊，大螢幕上水平排列 #}
-                        <h2 class="text-success me-md-3 mb-2 mb-md-0"><i class="bi bi-currency-dollar me-1"></i>每日租金: NT$ {{ item.price_per_day|floatformat:0 }}</h2>
+                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center mb-4">
+                        <h2 class="text-success me-md-3 mb-2 mb-md-0 fw-bold"><i class="bi bi-currency-dollar me-1 text-warning"></i>每日租金: NT$ {{ item.price_per_day|floatformat:0 }}</h2>
+                        {# 顯示押金金額 #}
+                        {% if item.deposit > 0 %}
+                        <h2 class="text-info mb-2 mb-md-0 fw-bold ms-md-3"><i class="bi bi-cash-coin me-1 text-info"></i>押金: NT$ {{ item.deposit|floatformat:0 }}</h2>
+                        {% endif %}
                         {% if item.is_available %}
-                            <span class="badge bg-success fs-6 py-2 px-3 animate__animated animate__fadeIn">可租賃</span> {# 徽章也加個淡入動畫 #}
+                            <span class="badge bg-success fs-6 py-2 px-3 animate__animated animate__fadeIn ms-md-3">可租賃</span>
                         {% else %}
-                            <span class="badge bg-danger fs-6 py-2 px-3 animate__animated animate__fadeIn">不可租賃</span>
+                            <span class="badge bg-danger fs-6 py-2 px-3 animate__animated animate__fadeIn ms-md-3">不可租賃</span>
                         {% endif %}
                     </div>
 
-                    <p class="text-secondary mb-5 text-center">{{ item.description|linebreaksbr }}</p> {# 描述文字居中 #}
+                    <p class="text-secondary mb-5 text-center">{{ item.description|linebreaksbr }}</p>
 
                     {% if item.is_available %}
                         <hr class="my-5">
@@ -42,9 +104,9 @@
                         <form method="post" action="{% url 'rent_item' item.pk %}" class="needs-validation" novalidate>
                             {% csrf_token %}
 
-                            {# 個人資訊區塊 #}
+                            {# 個人資訊區塊 - 繼續使用 render_field #}
                             <div class="mb-4 p-4 border rounded-3 bg-light">
-                                <h5 class="mb-3 text-dark text-center"><i class="bi bi-person-fill me-2"></i>您的基本資訊</h5>
+                                <h5 class="mb-3 text-center text-primary"><i class="bi bi-person-fill me-2 text-warning"></i>您的基本資訊</h5>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -71,18 +133,19 @@
                                     {% if form.phone_number.errors %}
                                         {% for error in form.phone_number.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                                     {% endif %}
-                                    <div class="form-text text-muted">方便我們與您聯繫確認訂單</div>
+                                    <div class="form-text">方便我們與您聯繫確認訂單</div>
                                 </div>
                             </div>
 
-                            {# 租賃日期區塊 #}
+                            {# 租賃日期區塊 - 不使用 render_field #}
                             <div class="mb-4 p-4 border rounded-3 bg-light">
-                                <h5 class="mb-3 text-dark text-center"><i class="bi bi-calendar-range-fill me-2"></i>選擇租賃日期</h5>
+                                <h5 class="mb-3 text-center text-primary"><i class="bi bi-calendar-range-fill me-2 text-warning"></i>選擇租賃日期</h5>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="{{ form.start_date.id_for_label }}" class="form-label">{{ form.start_date.label }}</label>
-                                            {% render_field form.start_date class="form-control form-control-lg" min=today_date placeholder="請選擇起始日期" %}
+                                            <label for="rentalStartDate" class="form-label">{{ form.start_date.label }}</label>
+                                            {# 直接渲染字段，其 ID 和 class 現在由 forms.py 控制，並由 Flatpickr 接管 #}
+                                            {{ form.start_date }}
                                             {% if form.start_date.errors %}
                                                 {% for error in form.start_date.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                                             {% endif %}
@@ -90,15 +153,27 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="{{ form.end_date.id_for_label }}" class="form-label">{{ form.end_date.label }}</label>
-                                            {% render_field form.end_date class="form-control form-control-lg" min=today_date placeholder="請選擇結束日期" %}
+                                            <label for="rentalEndDate" class="form-label">{{ form.end_date.label }}</label>
+                                            {# 直接渲染字段 #}
+                                            {{ form.end_date }}
                                             {% if form.end_date.errors %}
                                                 {% for error in form.end_date.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
                                             {% endif %}
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-text text-muted">租賃日期包含起始和結束日期。</div>
+                                <div class="form-text">租賃日期包含起始和結束日期。</div>
+                                {# 顯示總租金估算的地方 #}
+                                <div id="rentalEstimateContainer" class="mt-3 text-center" style="display: none;">
+                                    <span class="text-muted fw-bold">預估租金：</span>
+                                    <span id="totalRentalEstimate" class="text-primary fw-bold"></span>
+                                </div>
+                            </div>
+
+                            {# 總金額說明 #}
+                            <div class="alert alert-info text-center mt-4">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                **注意：** 預計總租金金額不包含商品押金，實際應付金額請依最終確認為準。
                             </div>
 
                             {% if form.non_field_errors %}
@@ -130,47 +205,83 @@
     </div>
 </div>
 
+{# Flatpickr JavaScript #}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+{# 載入 Flatpickr 的中文語言包 #}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
 <script>
-    // JavaScript to set the min attribute for date inputs to today's date
     document.addEventListener('DOMContentLoaded', function() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-        const day = String(today.getDate()).padStart(2, '0');
-        const todayString = `${year}-${month}-${day}`;
+        const startDateInput = document.getElementById('rentalStartDate');
+        const endDateInput = document.getElementById('rentalEndDate');
+        
+        const rentalEstimateContainer = document.getElementById('rentalEstimateContainer');
+        const totalRentalEstimateSpan = document.getElementById('totalRentalEstimate');
 
-        // Get elements by ID
-        const startDateInput = document.getElementById('id_start_date');
-        const endDateInput = document.getElementById('id_end_date');
+        const pricePerDay = parseFloat("{{ item.price_per_day|floatformat:0 }}"); // 確保是數字
 
-        // Set min attribute for both date inputs
-        if (startDateInput) startDateInput.setAttribute('min', todayString);
-        if (endDateInput) endDateInput.setAttribute('min', todayString);
+        // 初始化 Flatpickr - 移除 minDate 限制
+        const fpStartDate = flatpickr(startDateInput, {
+            dateFormat: "Y-m-d", // 日期格式
+            locale: "zh",        // 設置為中文
+            onChange: function(selectedDates, dateStr, instance) {
+                // 移除動態更新結束日期 minDate 的邏輯
+                // if (endDateInput.value && new Date(endDateInput.value) < selectedDates[0]) {
+                //     endDateInput.value = dateStr;
+                // }
+                calculateAndDisplayTotal();
+            }
+        });
 
-        // Optional: Ensure end_date is not before start_date
-        if (startDateInput && endDateInput) {
-            startDateInput.addEventListener('change', function() {
-                if (this.value) {
-                    endDateInput.setAttribute('min', this.value);
-                    // If end_date is currently before the new start_date, set it to start_date
-                    if (endDateInput.value < this.value) {
-                        endDateInput.value = this.value;
-                    }
-                } else {
-                    // If start date is cleared, reset end date's min to today
-                    endDateInput.setAttribute('min', todayString);
+        const fpEndDate = flatpickr(endDateInput, {
+            dateFormat: "Y-m-d", // 日期格式
+            locale: "zh",        // 設置為中文
+            onChange: function(selectedDates, dateStr, instance) {
+                // 移除動態更新起始日期 maxDate 的邏輯
+                calculateAndDisplayTotal();
+            }
+        });
+        
+        function calculateAndDisplayTotal() {
+            if (!startDateInput || !endDateInput) {
+                console.warn('日期輸入框未找到，無法計算租金。');
+                return;
+            }
+
+            const startDateStr = startDateInput.value;
+            const endDateStr = endDateInput.value;
+
+            if (startDateStr && endDateStr) {
+                const startDate = new Date(startDateStr + 'T00:00:00'); 
+                const endDate = new Date(endDateStr + 'T00:00:00');
+
+                const diffTime = endDate.getTime() - startDate.getTime();
+                // 計算天數，即使結束日期早於開始日期，也會得到負數或0
+                let days = (diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                // 移除對天數 <= 0 的檢查，允許負天數或 0 天的顯示 (如果使用者這樣選擇)
+                // 如果天數為負數或0，您可以決定顯示 0 或負數租金，或讓其行為由後端驗證處理
+                if (days <= 0) { // 這裡保留了最基本的邏輯，確保不會顯示不合理的正數
+                    totalRentalEstimateSpan.textContent = '天數無效或為0天'; // 更中性的提示
+                    rentalEstimateContainer.style.display = 'block';
+                    return;
                 }
-            });
 
-            // Prevent selecting a date earlier than start_date, even if min attribute is manipulated
-            endDateInput.addEventListener('change', function() {
-                if (startDateInput.value && this.value < startDateInput.value) {
-                    this.setCustomValidity('結束日期不能早於起始日期。');
+                if (!isNaN(pricePerDay)) {
+                    const totalCost = days * pricePerDay;
+                    totalRentalEstimateSpan.textContent = `NT$ ${totalCost.toLocaleString('zh-TW')}`;
+                    rentalEstimateContainer.style.display = 'block';
                 } else {
-                    this.setCustomValidity('');
+                    totalRentalEstimateSpan.textContent = '商品租金資訊錯誤';
+                    rentalEstimateContainer.style.display = 'block';
                 }
-            });
+            } else {
+                rentalEstimateContainer.style.display = 'none';
+                totalRentalEstimateSpan.textContent = '';
+            }
         }
+        
+        // 初始載入時也執行一次計算
+        calculateAndDisplayTotal();
     });
 </script>
 {% endblock %}
