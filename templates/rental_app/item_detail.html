@@ -1,159 +1,176 @@
-<!-- rental_app/templates/rental_app/item_detail.html -->
 {% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
 
 {% block title %}{{ item.name }} - 商品詳情{% endblock %}
 
 {% block content %}
-    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">{{ item.name }} ({{ item.get_category_display }})</h2>
+<div class="container my-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-body p-5">
+            {# 商品圖片區塊 #}
+            <div class="row mb-5">
+                <div class="col-12 d-flex justify-content-center align-items-center">
+                    {% if item.image_url %}
+                        <img src="{{ item.image_url }}" class="img-fluid rounded-3 shadow-sm" alt="{{ item.name }}" style="max-height: 500px; object-fit: contain;"> {# 圖片陰影稍微調小 #}
+                    {% else %}
+                        <img src="{% static 'images/placeholder.png' %}" class="img-fluid rounded-3 shadow-sm" alt="無圖片" style="max-height: 500px; object-fit: contain;">
+                    {% endif %}
+                </div>
+            </div>
 
-    <div class="item-detail-layout"> {# 類別名變為 item-detail-layout #}
-        <div class="item-media"> {# 類別名變為 item-media #}
-            {% if item.image_url %}
-                <img src="{{ item.image_url }}" alt="{{ item.name }}" class="item-detail-image" onerror="this.onerror=null;this.src='https://placehold.co/600x450/e0e0e0/333333?text=無圖片';">
-            {% else %}
-                <img src="https://placehold.co/600x450/e0e0e0/333333?text=無圖片" alt="Placeholder Image" class="item-detail-image">
-            {% endif %}
-        </div>
-        <div class="item-details-info"> {# 類別名變為 item-details-info #}
-            <p class="detail-description">{{ item.description|default:"這是一個優質品項，適合多種用途。了解更多特性與租賃資訊。" }}</p>
-            <p class="detail-price"><strong>每日租金:</strong> <span class="amount">NT${{ item.price_per_day }}</span></p>
-            <p class="detail-availability"><strong>狀態:</strong>
-                {% if item.is_available %}
-                    <span class="available">✅ 可用</span>
-                {% else %}
-                    <span class="unavailable">❌ 不可用</span>
-                {% endif %}
-            </p>
-
-            <h3 style="color: #333333; margin-top: 40px; margin-bottom: 20px; font-size: 1.8em; font-weight: 600;">預訂租賃</h3>
-            <form method="post" action="{% url 'rent_item' item.pk %}" class="rental-form"> {# 變更 URL name #}
-                {% csrf_token %}
-                <div class="form-group">
-                    {{ form.user_name.label_tag }}
-                    {{ form.user_name }}
-                    {% if form.user_name.errors %}
-                        <div class="form-errors">{% for error in form.user_name.errors %}{{ error }}{% endfor %}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.email.label_tag }}
-                    {{ form.email }}
-                    {% if form.email.errors %}
-                        <div class="form-errors">{% for error in form.email.errors %}{{ error }}{% endfor %}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.start_date.label_tag }}
-                    {{ form.start_date }}
-                    {% if form.start_date.errors %}
-                        <div class="form-errors">{% for error in form.start_date.errors %}{{ error }}{% endfor %}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.end_date.label_tag }}
-                    {{ form.end_date }}
-                    {% if form.end_date.errors %}
-                        <div class="form-errors">{% for error in form.end_date.errors %}{{ error }}{% endfor %}</div>
-                    {% endif %}
-                </div>
-                {% if form.non_field_errors %}
-                    <div class="form-errors" style="margin-bottom: 20px;">
-                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+            {# 商品資訊和租賃表單區塊 #}
+            <div class="row justify-content-center"> {# 使下方的內容在水平方向上居中，如果內容較窄會更美觀 #}
+                <div class="col-lg-8 col-md-10"> {# 在大螢幕上限制內容寬度，避免過寬 #}
+                    <h1 class="display-5 fw-bold mb-3 text-center text-primary">{{ item.name }}</h1> {# 標題強制居中 #}
+                    <p class="text-muted fs-5 mb-4 text-center"><i class="bi bi-tag-fill me-2"></i>{{ item.get_category_display }}</p>
+                    
+                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center mb-4"> {# 在小螢幕上垂直堆疊，大螢幕上水平排列 #}
+                        <h2 class="text-success me-md-3 mb-2 mb-md-0"><i class="bi bi-currency-dollar me-1"></i>每日租金: NT$ {{ item.price_per_day|floatformat:0 }}</h2>
+                        {% if item.is_available %}
+                            <span class="badge bg-success fs-6 py-2 px-3 animate__animated animate__fadeIn">可租賃</span> {# 徽章也加個淡入動畫 #}
+                        {% else %}
+                            <span class="badge bg-danger fs-6 py-2 px-3 animate__animated animate__fadeIn">不可租賃</span>
+                        {% endif %}
                     </div>
-                {% endif %}
-                <button type="submit" class="btn btn-primary" {% if not item.is_available %}disabled{% endif %}> {# 變數名變為 item #}
-                    {% if item.is_available %}立即租賃{% else %}目前不可租賃{% endif %} {# 變數名變為 item #}
-                </button>
-            </form>
-            <div style="margin-top: 30px; text-align: center;">
-                <a href="{% url 'all_items_list' %}" class="btn btn-link">返回商品列表</a> {# 變更 URL name #}
+
+                    <p class="text-secondary mb-5 text-center">{{ item.description|linebreaksbr }}</p> {# 描述文字居中 #}
+
+                    {% if item.is_available %}
+                        <hr class="my-5">
+                        <h3 class="mb-4 text-center text-dark fw-bold">立即預訂此商品</h3>
+                        <form method="post" action="{% url 'rent_item' item.pk %}" class="needs-validation" novalidate>
+                            {% csrf_token %}
+
+                            {# 個人資訊區塊 #}
+                            <div class="mb-4 p-4 border rounded-3 bg-light">
+                                <h5 class="mb-3 text-dark text-center"><i class="bi bi-person-fill me-2"></i>您的基本資訊</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ form.user_name.id_for_label }}" class="form-label">{{ form.user_name.label }}</label>
+                                            {% render_field form.user_name class="form-control form-control-lg" placeholder="您的姓名" %}
+                                            {% if form.user_name.errors %}
+                                                {% for error in form.user_name.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                                            {% render_field form.email class="form-control form-control-lg" type="email" placeholder="您的電子郵件" %}
+                                            {% if form.email.errors %}
+                                                {% for error in form.email.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.phone_number.id_for_label }}" class="form-label">{{ form.phone_number.label }}</label>
+                                    {% render_field form.phone_number class="form-control form-control-lg" placeholder="您的手機號碼 (選填)" %}
+                                    {% if form.phone_number.errors %}
+                                        {% for error in form.phone_number.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                    {% endif %}
+                                    <div class="form-text text-muted">方便我們與您聯繫確認訂單</div>
+                                </div>
+                            </div>
+
+                            {# 租賃日期區塊 #}
+                            <div class="mb-4 p-4 border rounded-3 bg-light">
+                                <h5 class="mb-3 text-dark text-center"><i class="bi bi-calendar-range-fill me-2"></i>選擇租賃日期</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ form.start_date.id_for_label }}" class="form-label">{{ form.start_date.label }}</label>
+                                            {% render_field form.start_date class="form-control form-control-lg" min=today_date placeholder="請選擇起始日期" %}
+                                            {% if form.start_date.errors %}
+                                                {% for error in form.start_date.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ form.end_date.id_for_label }}" class="form-label">{{ form.end_date.label }}</label>
+                                            {% render_field form.end_date class="form-control form-control-lg" min=today_date placeholder="請選擇結束日期" %}
+                                            {% if form.end_date.errors %}
+                                                {% for error in form.end_date.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-text text-muted">租賃日期包含起始和結束日期。</div>
+                            </div>
+
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger mt-3 text-center" role="alert">
+                                    {% for error in form.non_field_errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mt-4 animate__animated animate__pulse animate__infinite">
+                                <i class="bi bi-cart-fill me-2"></i>立即預訂
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning mt-5 text-center" role="alert">
+                            此商品目前不可租賃，請選擇其他商品。
+                        </div>
+                    {% endif %}
+
+                    <div class="text-center mt-5">
+                        <a href="{% url 'all_items_list' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-arrow-left-circle me-2"></i>返回商品列表
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <style>
-        /* 樣式名稱也從 camera- 變更為 item- */
-        .item-detail-layout {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 40px;
-            margin-top: 20px;
-            align-items: flex-start;
-        }
-        .item-media {
-            flex: 2;
-            min-width: 350px;
-            text-align: center;
-        }
-        .item-detail-image {
-            width: 100%;
-            max-width: 600px;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-            border: 1px solid #eeeeee;
-        }
-        .item-details-info {
-            flex: 1;
-            min-width: 300px;
-        }
-        .detail-description {
-            font-size: 1.05em;
-            line-height: 1.7;
-            color: #555;
-            margin-bottom: 25px;
-        }
-        .detail-price, .detail-availability {
-            font-size: 1.15em;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        .detail-price strong, .detail-availability strong {
-            color: #222;
-            font-weight: 600;
-        }
-        .detail-price .amount {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #5a7d9b;
-            margin-left: 5px;
-        }
-        .availability .available {
-            color: #28a745;
-            font-weight: bold;
-        }
-        .availability .unavailable {
-            color: #dc3545;
-            font-weight: bold;
-        }
-        .rental-form {
-            background-color: #fcfcfc;
-            padding: 30px;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-            margin-top: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .btn-primary[disabled] {
-            opacity: 0.6;
-            cursor: not-allowed;
-            background-image: none;
-            background-color: #cccccc;
-            box-shadow: none;
-            transform: none;
-        }
+<script>
+    // JavaScript to set the min attribute for date inputs to today's date
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayString = `${year}-${month}-${day}`;
 
-        /* 響應式調整 */
-        @media (max-width: 768px) {
-            .item-detail-layout {
-                flex-direction: column;
-                align-items: center;
-                gap: 30px;
-            }
-            .item-media, .item-details-info {
-                width: 100%;
-                min-width: unset;
-            }
+        // Get elements by ID
+        const startDateInput = document.getElementById('id_start_date');
+        const endDateInput = document.getElementById('id_end_date');
+
+        // Set min attribute for both date inputs
+        if (startDateInput) startDateInput.setAttribute('min', todayString);
+        if (endDateInput) endDateInput.setAttribute('min', todayString);
+
+        // Optional: Ensure end_date is not before start_date
+        if (startDateInput && endDateInput) {
+            startDateInput.addEventListener('change', function() {
+                if (this.value) {
+                    endDateInput.setAttribute('min', this.value);
+                    // If end_date is currently before the new start_date, set it to start_date
+                    if (endDateInput.value < this.value) {
+                        endDateInput.value = this.value;
+                    }
+                } else {
+                    // If start date is cleared, reset end date's min to today
+                    endDateInput.setAttribute('min', todayString);
+                }
+            });
+
+            // Prevent selecting a date earlier than start_date, even if min attribute is manipulated
+            endDateInput.addEventListener('change', function() {
+                if (startDateInput.value && this.value < startDateInput.value) {
+                    this.setCustomValidity('結束日期不能早於起始日期。');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
         }
-    </style>
+    });
+</script>
 {% endblock %}

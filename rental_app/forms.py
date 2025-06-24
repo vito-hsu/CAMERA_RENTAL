@@ -1,66 +1,66 @@
 # rental_app/forms.py
+
 from django import forms
-from .models import Rental, Item # 從 models 導入 Item 而非 Camera
 from django.core.exceptions import ValidationError
-from django.forms.widgets import DateInput
-from django.utils import timezone # 確保導入 timezone
+from datetime import date
+from .models import Rental, Item # 確保 Item 模型也被導入
+from django.db.models import Q # 確保 Q 有導入
 
 class RentalForm(forms.ModelForm):
-    """
-    用於租賃商品的表單。
-    """
+    # 手動定義日期欄位，以便於在模板中添加特定屬性 (如 type="date")
+    start_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        label="起始日期"
+    )
+    end_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        label="結束日期"
+    )
+
     class Meta:
         model = Rental
-        fields = ['user_name', 'email', 'start_date', 'end_date']
-        widgets = {
-            'start_date': DateInput(attrs={'type': 'date'}),
-            'end_date': DateInput(attrs={'type': 'date'}),
-            'user_name': forms.TextInput(attrs={'placeholder': '您的姓名'}),
-            'email': forms.EmailInput(attrs={'placeholder': '您的電子郵件地址'}),
-        }
+        fields = ['user_name', 'email', 'phone_number', 'start_date', 'end_date'] # <--- 確保這裡有 'phone_number'
         labels = {
             'user_name': '您的姓名',
             'email': '電子郵件',
-            'start_date': '開始日期',
+            'phone_number': '手機號碼 (選填)',
+            'start_date': '起始日期',
             'end_date': '結束日期',
         }
 
     def clean(self):
-        """
-        自定義表單驗證，確保日期有效且商品在庫存中可用。
-        """
         cleaned_data = super().clean()
         start_date = cleaned_data.get('start_date')
         end_date = cleaned_data.get('end_date')
-        # 表單中的 item 實例應該從 view 傳入 (例如 self.instance.item)
-        # 由於 RentalForm 預設沒有直接的 item 欄位，我們從 Rental 實例中獲取
-        # 在 views.py 中創建 RentalForm 時，我們會將 item 關聯到 instance
-        # 因此這裡假設 self.instance.item 是可用的
-        item = self.instance.item if self.instance and self.instance.item else None
+        item = self.instance.item # 從表單實例獲取商品對象，由 views.py 傳入
 
+        # 檢查日期有效性
         if start_date and end_date:
-            if start_date < timezone.now().date():
-                raise ValidationError("開始日期不能早於今天。")
+            if start_date < date.today():
+                raise ValidationError("起始日期不能早於今天。", code='past_start_date')
             if end_date < start_date:
-                raise ValidationError("結束日期不能早於開始日期。")
+                raise ValidationError("結束日期不能早於起始日期。", code='invalid_end_date')
 
-            if item: # 檢查 item 而非 camera
-                # 首先檢查 item.is_available 總體狀態
-                if not item.is_available:
-                     raise ValidationError(f"{item.name} 目前不可用。")
+            # 檢查商品是否存在且可用
+            if not item:
+                raise ValidationError("要租賃的商品不存在。", code='item_not_found')
+            # 因為 save 方法會處理 is_available，這裡只檢查初始狀態
+            # if not item.is_available: # 這行可以根據需求決定是否保留，如果只想允許租賃 'is_available=True' 的商品則保留
+            #     raise ValidationError(f"{item.name} 目前不可租賃。", code='item_not_available')
 
-                # 進階庫存檢查：檢查是否有重疊的租賃
-                # 假設一個 item 只有一個實體
-                overlapping_rentals = Rental.objects.filter(
-                    item=item, # 變更為 item
-                    start_date__lte=end_date,
-                    end_date__gte=start_date,
-                ).exclude(status__in=['returned', 'cancelled'])
+            # 檢查日期衝突
+            # 查找在指定日期範圍內與當前商品有重疊的租賃訂單 (不包括已取消或已歸還的)
+            conflicting_rentals = Rental.objects.filter(
+                # 將 Q 物件放在所有關鍵字參數之前
+                Q(start_date__lte=end_date, end_date__gte=start_date),
+                item=item,
+                status__in=['pending', 'approved'] # 考慮待確認和已確認的租賃
+            ).exclude(pk=self.instance.pk) # 排除掉當前正在編輯的租賃實例（如果有的話，對於新建則無影響）
 
-                if self.instance.pk: # 如果是編輯現有租賃
-                    overlapping_rentals = overlapping_rentals.exclude(pk=self.instance.pk)
-
-                if overlapping_rentals.exists():
-                    raise ValidationError(f"{item.name} 在您選擇的日期範圍內已被預訂。")
+            if conflicting_rentals.exists():
+                raise ValidationError(
+                    f"{item.name} 在您選擇的日期範圍 ({start_date} 到 {end_date}) 內已被預訂。請選擇其他日期。",
+                    code='date_conflict'
+                )
 
         return cleaned_data
