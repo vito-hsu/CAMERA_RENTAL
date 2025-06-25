@@ -31,16 +31,17 @@
                 </div>
             </div>
 
-            <!-- 常見問題 -->
+            <!-- 常見問題 / 前往留言板 -->
             <div class="text-center mt-5">
                 <h4 class="fw-bold mb-3 animate__animated animate__fadeInDown animate__delay-2s">
-                    常見問題
+                    有疑問嗎？前往留言板
                 </h4>
                 <p class="text-muted animate__animated animate__fadeInUp animate__delay-2-2s">
-                    在聯絡我們之前，您可以先瀏覽我們的「關於我們」頁面，也許能找到所需資訊。
+                    在聯絡我們之前，您可以先瀏覽我們的留言板，也許能找到所需資訊或提出您的問題。
                 </p>
-                <a href="{% url 'about_us' %}" class="btn btn-outline-primary btn-lg rounded-pill mt-3 animate__animated animate__fadeInUp animate__delay-2-4s shadow-sm">
-                    <i class="bi bi-info-circle me-2"></i> 前往關於我們
+                {# 將前往關於我們改成前往留言板，並給定超連結網址 #}
+                <a href="https://fastapi-react-vito.web.app/" class="btn btn-outline-primary btn-lg rounded-pill mt-3 animate__animated animate__fadeInUp animate__delay-2-4s shadow-sm" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-chat-dots me-2"></i> 前往留言板
                 </a>
             </div>
 

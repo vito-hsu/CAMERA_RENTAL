@@ -1,157 +1,257 @@
-<!-- rental_app/templates/rental_app/my_rentals.html -->
 {% extends 'base.html' %}
 
-{% block title %}我的租賃{% endblock %}
+{% block title %}我的租賃訂單 - {{ block.super }}{% endblock %} {# 更好的標題繼承方式 #}
 
 {% block content %}
-    <h2 style="text-align: center; color: #333333; margin-bottom: 40px; font-size: 2.2em; font-weight: 600;">我的租賃訂單</h2>
+    <header class="text-center my-5 py-3 bg-light rounded-3 shadow-sm"> {# 添加更多 Bootstrap 類別 #}
+        <h2 class="display-5 fw-bold text-dark mb-0">我的租賃訂單</h2>
+        <p class="lead text-muted mt-2">在這裡查看您的所有歷史和當前租賃活動。</p>
+    </header>
 
     {% if rentals %}
-        <div class="rental-list">
-            {% for rental in rentals %}
-                <div class="rental-item">
-                    <div class="rental-details">
-                        <h3 class="rental-camera-name">{{ rental.camera.name }}</h3>
-                        <p><strong>租賃者:</strong> {{ rental.user_name }}</p>
-                        <p><strong>日期:</strong> {{ rental.start_date }} 至 {{ rental.end_date }}</p>
-                        <p><strong>總租金:</strong> NT$<span class="amount">{{ rental.total_price }}</span></p>
-                        <p class="rented-at"><strong>預訂時間:</strong> {{ rental.rented_at|date:"Y-m-d H:i" }}</p>
+        {# 使用 Bootstrap grid 和 Masonry 的組合，實現響應式瀑布流 #}
+        {# 添加 mx-auto 和 container 類別以更好地控制最大寬度 #}
+        <div class="container my-4">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" data-masonry='{"percentPosition": true, "gutter": 24 }'> {# 調整 gutter #}
+                {% for rental in rentals %}
+                    <div class="col d-flex"> {# 使用 d-flex 確保 Masonry 元素高度一致 #}
+                        <div class="card h-100 shadow-sm border-0 rounded-4 transition-hover flex-fill"> {# Bootstrap card 和自定義樣式 #}
+                            <div class="card-body p-4 d-flex flex-column"> {# 添加 flex-column #}
+                                {# 根據您的 Item 模型名稱，這裡是 rental.item.name 而不是 rental.camera.name #}
+                                <h3 class="card-title fw-bold text-truncate mb-3">{{ rental.item.name }}</h3> 
+                                <p class="card-text mb-1"><strong>租賃者:</strong> {{ rental.user_name }}</p>
+                                <p class="card-text mb-1"><strong>電子郵件:</strong> {{ rental.email }}</p> {# 顯示更多信息 #}
+                                {% if rental.phone_number %}
+                                <p class="card-text mb-1"><strong>手機:</strong> {{ rental.phone_number }}</p>
+                                {% endif %}
+                                <p class="card-text mb-1"><strong>租賃日期:</strong> {{ rental.start_date|date:"Y年m月d日" }} 至 {{ rental.end_date|date:"Y年m月d日" }}</p>
+                                <p class="card-text mb-3">
+                                    <strong>總租金:</strong> <span class="text-secondary">NT$</span><span class="fw-bold text-primary fs-5">{{ rental.total_price }}</span>
+                                </p>
+                                <p class="card-text text-muted small mt-auto"> {# mt-auto 將預訂時間推到底部 #}
+                                    <small><strong>預訂時間:</strong> {{ rental.rented_at|date:"Y-m-d H:i" }}</small>
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0 text-end py-3 pe-4"> {# 調整 padding #}
+                                {# 動態應用 Bootstrap 的 badge 類別，並修正 'approved' 狀態 #}
+                                {% if rental.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark">{{ rental.get_status_display }}</span>
+                                {% elif rental.status == 'approved' %}
+                                    <span class="badge bg-success text-white">{{ rental.get_status_display }}</span> {# 綠色背景白色文字 #}
+                                {% elif rental.status == 'returned' %}
+                                    <span class="badge bg-info text-white">{{ rental.get_status_display }}</span>
+                                {% elif rental.status == 'cancelled' %}
+                                    <span class="badge bg-danger text-white">{{ rental.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary text-white">{{ rental.get_status_display }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    <div class="rental-status">
-                        <span class="status-badge status-{{ rental.status }}">{{ rental.get_status_display }}</span>
-                    </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
     {% else %}
-        <p style="text-align: center; color: #777; margin-top: 50px; font-size: 1.1em;">您目前沒有任何租賃訂單。</p>
+        <p class="text-center text-muted fs-5 my-5 p-4 bg-light rounded-3 shadow-sm">您目前沒有任何租賃訂單。</p>
+        <div class="text-center my-5">
+            <a href="{% url 'all_items_list' %}" class="btn btn-outline-primary btn-lg">瀏覽所有商品 <i class="bi bi-arrow-right"></i></a> {# 使用 outline 按鈕和 Bootstrap icon #}
+        </div>
     {% endif %}
 
-    <div style="text-align: center; margin-top: 50px;">
-        <a href="{% url 'camera_list' %}" class="btn btn-secondary">瀏覽更多相機</a>
-    </div>
+    <footer class="text-center my-5">
+        {% if rentals %} {# 如果有訂單，才顯示這個按鈕 #}
+            <a href="{% url 'all_items_list' %}" class="btn btn-primary btn-lg">瀏覽更多商品</a> {# 假設您的列表頁面 URL 名稱是 'all_items_list' #}
+        {% endif %}
+    </footer>
 
-    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-    <script>
+    {# Masonry CDN (通常在 base.html 底部引入一次即可，如果您已引入則無需在此重複) #}
+    {# 如果您在 base.html 中沒有導入，請取消註釋下方這一行 #}
+    {# <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script> #}
+    {# 如果您想使用 Masonry 的自動初始化，可以移除下面的 JS 區塊，並確保 HTML 的 data-masonry 屬性正確。 #}
+    {# 如果 Masonry 沒有自動生效，請取消註釋以下 JS 區塊，或在 base.html 中確保它被正確導入和初始化。 #}
+    {# <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var elem = document.querySelector('.rental-list');
-            if (elem) {
-                var msnry = new Masonry(elem, {
-                    // Masonry 選項
-                    itemSelector: '.rental-item', // 瀑布流項目選擇器
-                    columnWidth: '.rental-item', // 欄寬與項目寬度相同
-                    gutter: 20, // 項目之間的間距 (水平和垂直)
-                    percentPosition: true, // 使用百分比定位，有利於響應式佈局
-                    resize: true // 窗口大小改變時重新佈局
+            var masonryElements = document.querySelectorAll('.row[data-masonry]');
+            if (masonryElements.length > 0) {
+                masonryElements.forEach(function(elem) {
+                    new Masonry(elem, {
+                        itemSelector: '.col',
+                        percentPosition: true,
+                        gutter: 24, // 與 Bootstrap 的 g-4 類別保持一致
+                    });
                 });
-
-                // 如果有圖片，確保圖片加載後重新佈局 (可選，但對於瀑布流很重要)
-                // var imgLoad = imagesLoaded( elem );
-                // imgLoad.on( 'always', function() {
-                //   msnry.layout();
-                // });
             }
         });
-    </script>
+    </script> #}
+{% endblock %}
 
+{% block extra_css %}
     <style>
-        .rental-list {
-            /* 移除原有的 flexbox 佈局，由 Masonry 接管 */
-            /* display: flex; */
-            /* flex-direction: column; */
-            /* gap: 20px; */
+        /* CSS Variables for easier theme management */
+        :root {
+            --primary-color: #0d6efd; /* Bootstrap primary blue */
+            --secondary-color: #6c757d; /* Bootstrap secondary gray */
+            --light-bg: #f8f9fa; /* Bootstrap light background */
+            --dark-text: #212529; /* Bootstrap dark text */
+            --shadow-light: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 20px rgba(0,0,0,0.15);
+            --border-radius-lg: 0.5rem; /* Bootstrap border-radius-4 equivalent */
+            --gutter-size: 1.5rem; /* Bootstrap g-4 equivalent */
+        }
 
-            margin: 0 auto; /* 讓整個網格在父容器中居中 */
-            position: relative; /* Masonry 運作所需的定位 */
-            /* Masonry 會根據 columnWidth 和 gutter 自動計算總寬度 */
+        body {
+            background-color: var(--light-bg); /* Use a light background for the whole page */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Clean modern font */
         }
-        .rental-item {
-            /* Masonry 會根據這個寬度來計算欄位，並將此寬度應用到每個項目上 */
-            width: calc(33.333% - 20px); /* 大約三欄，減去 gutter */
-            margin-bottom: 20px; /* 垂直間距，Masonry 會處理水平間距 */
 
-            background-color: #ffffff; /* 純白色背景，更乾淨 */
-            border: none; /* 移除邊框 */
-            border-radius: 12px; /* 更大的圓角，類似 Pinterest 卡片 */
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 柔和但更明顯的陰影，製造浮動感 */
-            /* 移除 flex 相關佈局，讓 Masonry 決定其位置 */
-            /* display: flex; */
-            /* justify-content: space-between; */
-            /* align-items: flex-start; */
-            /* flex-wrap: wrap; */
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        /* Header Styles */
+        header h2 {
+            color: var(--dark-text); /* Use variable for consistent dark text */
         }
-        .rental-item:hover {
-            transform: translateY(-5px); /* 懸停時輕微上浮 */
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* 懸停時陰影更突出 */
+        header p.lead {
+            color: var(--secondary-color); /* Use variable for muted text */
         }
-        .rental-details {
-            /* flex-grow: 1; /* 移除，除非您在卡片內部仍使用 flex */
-            width: 100%; /* 確保內容佔滿卡片寬度 */
-            /* min-width: 200px; */
-            /* margin-right: 20px; /* 移除，因為不再是橫向佈局 */
+
+        /* Card Custom Styles */
+        .card {
+            border-radius: var(--border-radius-lg); /* Use variable for consistent border radius */
+            overflow: hidden; /* Ensures inner content respects rounded corners */
         }
-        .rental-details h3 {
-            margin-top: 0;
-            color: #333333;
-            font-size: 1.5em; /* 標題字體更大 */
-            margin-bottom: 12px; /* 增加間距 */
-            font-weight: 700; /* 更粗的字體，強調 */
+
+        .transition-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transition for hover effects */
         }
-        .rental-details p {
-            margin: 6px 0; /* 調整行間距 */
-            color: #555;
-            font-size: 1em; /* 字體更清晰 */
+        .transition-hover:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: var(--shadow-hover) !important; /* Stronger shadow on hover */
         }
-        .rental-details .amount {
-            font-weight: bold;
-            color: #4A90E2; /* 選擇一個 Pinterest 風格的藍色作為強調色 */
-            font-size: 1.2em; /* 價格數字更突出 */
-            margin-left: 3px;
+
+        .card-body {
+            /* flex-column ensures content inside card-body stacks vertically */
+            /* mt-auto on last p tag pushes it to the bottom */
         }
-        .rental-details .rented-at {
-            font-size: 0.9em; /* 時間字體 */
-            color: #888;
-            margin-top: 10px; /* 增加與上方內容的間距 */
+
+        .card-title {
+            font-size: 1.6em; /* Slightly larger card title */
+            color: var(--dark-text);
         }
-        .rental-status {
-            width: 100%; /* 讓狀態徽章佔據一行 */
-            text-align: right; /* 狀態徽章靠右 */
-            margin-top: 15px; /* 與上方內容間距 */
+
+        .card-text strong {
+            color: #495057; /* Slightly darker grey for labels */
         }
-        .status-badge {
-            padding: 8px 16px; /* 調整內邊距 */
-            border-radius: 20px; /* 更圓的圓角 */
-            font-weight: 600; /* 粗體 */
-            font-size: 0.85em; /* 字體大小 */
+
+        .text-primary {
+            color: var(--primary-color) !important; /* Ensure Bootstrap primary color is applied */
+        }
+
+        .fs-5 {
+            font-size: 1.25rem !important; /* Bootstrap font size 5 */
+        }
+
+        .text-secondary {
+            color: var(--secondary-color) !important;
+        }
+
+        .text-muted {
+            font-size: 0.9em; /* Smaller font for meta info */
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 0.6em 1.2em; /* Adjust padding for a better look */
+            border-radius: 1.5rem; /* More rounded pill shape */
+            font-weight: 600; /* Bold text for badges */
+            font-size: 0.8em; /* Slightly smaller text for badges */
+            white-space: nowrap; /* Prevent badge text from wrapping */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+            display: inline-flex; /* Use flexbox for vertical alignment if needed */
+            align-items: center;
+            justify-content: center;
+            min-width: 80px; /* Minimum width for consistency */
+        }
+
+        /* Specific Status Colors - Adjusted for better contrast and vibrancy */
+        .badge.bg-warning {
+            background-color: #ffc107 !important; /* Brighter yellow for pending */
+            color: #343a40 !important; /* Darker text for warning background */
+        }
+        .badge.bg-success {
+            background-color: #28a745 !important; /* Standard success green */
+            color: white !important;
+        }
+        .badge.bg-info {
+            background-color: #17a2b8 !important; /* Standard info blue-green */
+            color: white !important;
+        }
+        .badge.bg-danger {
+            background-color: #dc3545 !important; /* Standard danger red */
+            color: white !important;
+        }
+        .badge.bg-secondary {
+            background-color: #6c757d !important; /* Standard secondary gray */
+            color: white !important;
+        }
+
+
+        /* Footer Button Adjustments */
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
             color: white;
-            white-space: nowrap;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* 輕微陰影 */
         }
-        /* 狀態顏色 - 調整為 Pinterest 風格的柔和且清晰的色調 */
-        .status-pending { background-color: #FFC107; /* 鮮明黃色 */ }
-        .status-active { background-color: #4CAF50; /* 清新綠色 */ }
-        .status-returned { background-color: #9E9E9E; /* 柔和灰色 */ }
-        .status-cancelled { background-color: #F44336; /* 明亮紅色 */ }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
 
-        /* 響應式調整 */
-        @media (max-width: 992px) { /* 平板電腦，兩欄佈局 */
-            .rental-item {
-                width: calc(50% - 20px);
+        /* Responsive Adjustments for Masonry Grid */
+        @media (min-width: 1200px) { /* Extra large devices, 4 columns for example */
+            .row-cols-lg-3 > .col {
+                /* If you want 4 columns on very large screens */
+                /* flex: 0 0 auto;
+                width: 25%; */
             }
         }
-        @media (max-width: 600px) { /* 手機，單欄佈局 */
-            .rental-list {
-                margin: 0 15px; /* 整個列表左右留白 */
+
+        @media (max-width: 991.98px) { /* Medium devices (tablets) and smaller */
+            /* Bootstrap row-cols-md-2 already handles 2 columns */
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
             }
-            .rental-item {
-                width: calc(100% - 0px); /* 100% 寬度，內部的 padding 會保持 */
-                margin: 0 auto 20px auto; /* 居中並保持底部間距 */
+        }
+
+        @media (max-width: 767.98px) { /* Small devices (phones) and smaller */
+            /* Bootstrap row-cols-1 already handles 1 column */
+            .card-title {
+                font-size: 1.4em; /* Slightly smaller title on mobile */
             }
-            .rental-status {
-                margin-top: 15px;
-                text-align: left; /* 狀態徽章在手機上靠左 */
+            .card-body {
+                padding: 1.25rem; /* Adjust padding for smaller screens */
+            }
+            .card-footer {
+                padding: 0.75rem 1.25rem 1rem;
+            }
+            .badge {
+                padding: 0.5em 1em;
+                font-size: 0.75em;
+                min-width: 70px;
+            }
+        }
+
+        @media (max-width: 575.98px) { /* Extra small devices (portrait phones) */
+            header h2 {
+                font-size: 2em; /* Smaller title for very small screens */
+            }
+            header p.lead {
+                font-size: 0.9em;
+            }
+            .container {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
             }
         }
     </style>
