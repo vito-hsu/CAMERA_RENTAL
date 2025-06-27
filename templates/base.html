@@ -370,12 +370,10 @@
                 <div class="col-md-4 col-lg-3 mb-4 mb-md-0">
                     <h5 class="animate__animated animate__fadeInUp animate__delay-0-7s">快速連結</h5>
                     <ul class="list-unstyled">
-                        <li class="animate__animated animate__fadeInUp animate__delay-0-8s"><a href="{% url 'all_items_list' %}">所有器材</a></li>
-                        <li class="animate__animated animate__fadeInUp animate__delay-0-9s"><a href="{% url 'my_rentals' %}">我的租賃</a></li>
-                        {# 將租賃規章連結也加到頁腳，方便用戶找到 #}
-                        <li class="animate__animated animate__fadeInUp animate__delay-0-9s"><a href="{% url 'rental_terms' %}">租賃規章</a></li>
-                        <li class="animate__animated animate__fadeInUp animate__delay-1s"><a href="{% url 'about_us' %}">關於我們</a></li>
-                        {# 根據您的實際需求增加更多頁面連結 #}
+                        {# 只保留「我的作品」連結，並指向新網址 #}
+                        <li class="animate__animated animate__fadeInUp animate__delay-0-8s">
+                            <a href="https://slideshow-vito-1788.web.app/" target="_blank" rel="noopener noreferrer">我的作品</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="col-md-4 col-lg-3 mb-4 mb-md-0">
@@ -399,7 +397,7 @@
             </div>
             <div class="row">
                 <div class="col-12 text-center copyright animate__animated animate__fadeInUp animate__delay-2s">
-                    <p class="mb-0">&copy; {{ "now"|date:"Y" }} CameraIsAllYouNeed. All rights reserved.</p>
+                    <p class="mb-0">&copy; {{ "now"|date:"Y" }} CameraIsAllUNeed. All rights reserved.</p>
                 </div>
             </div>
         </div>
